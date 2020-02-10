@@ -1,0 +1,21 @@
+version: '3'
+services: 
+    api:
+        build: './app'
+        container_name: 'api'
+        expose: 
+            -   8000
+        volumes: 
+            -   ./staticfiles:/code/api/static/
+        command: [sh, -c, "python manage.py collectstatic --noinput && gunicorn api.wsgi --bind 0.0.0.0:8000"]
+    nginx:
+        build: './nginx'
+        container_name: 'nginx'
+        expose: 
+            - 80
+        ports:
+            - "9000:80"
+        volumes: 
+            -   ./staticfiles:/static
+        depends_on:
+            - api
