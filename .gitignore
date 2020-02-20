@@ -58,6 +58,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+db.sqlite3
 db.sqlite3-journal
 
 
@@ -133,5 +134,3 @@ dmypy.json
 #Collected static files
 staticfiles/
 .nginx/
-
-.idea/*
