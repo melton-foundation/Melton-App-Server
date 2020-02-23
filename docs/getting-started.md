@@ -20,8 +20,9 @@
 4. Change current directory to [api](../app/api)
 5. For any testing purpose, you can delete your sqlite3 db and run  `python manage.py makemigrations` and `python manage.py migrate` to apply all changes to DB Schema
 6. To load some initial data - for eq. a super user, run `python manage.py authentication/fixtures/superuser.json` to load the data present in superuser.json file.
-7. Now you can run `python manage.py runserver` to start the django application.
-8. Open http://127.0.0.1:8000/api to view the application.
+7. This adds a superuser with email: admin@admin.com and password: admin
+8. Now you can run `python manage.py runserver` to start the django application.
+9. Open http://127.0.0.1:8000/api to view the application.
 
 
 ### Docker

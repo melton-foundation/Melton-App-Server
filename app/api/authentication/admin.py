@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
 from rest_framework.authtoken.models import Token
+
+from authentication.forms import AppUserChangeForm, AppUserCreationForm
 from authentication.models import AppUser, ExpiringToken
-from authentication.forms import AppUserCreationForm, AppUserChangeForm
+
 
 class AppUserAdmin(UserAdmin):
     add_form = AppUserCreationForm
@@ -18,16 +19,18 @@ class AppUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
+            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')}
+         ),
     )
     search_fields = ('email',)
     ordering = ('email',)
+
 
 class TokenAdmin(admin.ModelAdmin):
     list_display = ('key', 'user', 'created', 'refreshed')
     fields = ('user',)
     ordering = ('-created',)
+
 
 admin.site.unregister(Token)
 admin.site.register(ExpiringToken, TokenAdmin)

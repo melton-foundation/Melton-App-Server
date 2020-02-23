@@ -6,7 +6,6 @@
         "password": "pbkdf2_sha256$180000$TTHdatbCBZrS$4Qe4ga5/hCYkkEf3dWEMhnst+EL7MtVPe4KRgmvw/Nc=",
         "last_login": null,
         "is_superuser": false,
-        "username": "staff",
         "first_name": "",
         "last_name": "",
         "email": "staff@staff.com",
