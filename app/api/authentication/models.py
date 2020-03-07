@@ -7,8 +7,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 
-# Create your models here.
-
 
 class AppUser(AbstractUser):
     username = None
@@ -21,6 +19,9 @@ class AppUser(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
 
 
 class ExpiringToken(Token):
@@ -51,3 +52,51 @@ class ExpiringToken(Token):
     class Meta:
         verbose_name = 'Expiring Token'
         verbose_name_plural = 'Expiring Tokens'
+
+
+class ProfileManager(models.Manager):
+
+    def create(self, email, name, is_junior_fellow, campus, batch, number, country_code='', points=0):
+        user = AppUser(email=email, is_active=False)
+        user.save()
+
+        profile = Profile(user=user, name=name, is_junior_fellow=is_junior_fellow,
+                          campus=campus, batch=batch, points=points)
+        profile.save()
+
+        phone_number = PhoneNumber(
+            user_profile=profile, country_code=country_code, number=number)
+        phone_number.save()
+
+        return profile
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        AppUser,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+    name = models.CharField(max_length=100)
+    is_junior_fellow = models.BooleanField()
+    campus = models.CharField(max_length=100)
+    batch = models.PositiveIntegerField()
+    points = models.PositiveIntegerField(blank=True)
+
+    objects = ProfileManager()
+
+    def __str__(self):
+        return f'{self.name} - {self.user}'
+
+
+class PhoneNumber(models.Model):
+    user_profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='phone_number'
+    )
+    country_code = models.CharField(max_length=5, blank=True)
+    number = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f'{self.country_code} {self.number}'
