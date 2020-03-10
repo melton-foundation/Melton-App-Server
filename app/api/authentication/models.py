@@ -24,8 +24,19 @@ class AppUser(AbstractUser):
         return self.email
 
 
+class ExpiringTokenManager(models.Manager):
+    def get_or_create_by_email(self, email):
+        try:
+            user = AppUser.objects.get(email = email)
+            token = self.get_or_create(user = user)
+            return token
+        except AppUser.DoesNotExist:
+            return None
+
 class ExpiringToken(Token):
     refreshed = models.DateTimeField(_('Refreshed'), auto_now_add=True)
+
+    objects = ExpiringTokenManager()
 
     def refresh(self):
         self.refreshed = timezone.now()
@@ -67,6 +78,9 @@ class ProfileManager(models.Manager):
         phone_number = PhoneNumber(
             user_profile=profile, country_code=country_code, number=number)
         phone_number.save()
+
+        token = ExpiringToken(user = user)
+        token.save()
 
         return profile
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from authentication.models import AppUser, PhoneNumber, Profile
+from authentication.models import AppUser, PhoneNumber, Profile, ExpiringToken
 
 
 class AppUserSerializer(serializers.ModelSerializer):
@@ -10,18 +10,18 @@ class AppUserSerializer(serializers.ModelSerializer):
 
 
 class PhoneNumberSerializer(serializers.ModelSerializer):
-    user_profile = serializers.PrimaryKeyRelatedField(
-        read_only=True, required=False)
+    countryCode = serializers.CharField(source='country_code')
 
     class Meta:
         model = PhoneNumber
-        fields = '__all__'
+        fields = ['number', 'countryCode']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = AppUserSerializer()
+    isJuniorFellow = serializers.BooleanField(source='is_junior_fellow')
     points = serializers.IntegerField(read_only=True)
-    phone_number = PhoneNumberSerializer()
+    phoneNumber = PhoneNumberSerializer(source='phone_number')
 
     def create(self, validated_data):
         profile = Profile.objects.create(
@@ -37,7 +37,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['user', 'name', 'isJuniorFellow',
+                  'campus', 'batch', 'points', 'phoneNumber']
         depth = 1
 
 

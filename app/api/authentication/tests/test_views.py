@@ -27,11 +27,11 @@ class RegistrationAPITest(APITestCase):
                 "email": self.EMAIL
             },
             "name": self.NAME,
-            "is_junior_fellow": self.IS_JUNIOR_FELLOW,
+            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
             "campus": self.CAMPUS,
             "batch": self.BATCH,
-            "phone_number": {
-                "country_code": self.COUNTRY_CODE,
+            "phoneNumber": {
+                "countryCode": self.COUNTRY_CODE,
                 "number": self.NUMBER
             }
         }
@@ -59,11 +59,11 @@ class RegistrationAPITest(APITestCase):
                 "email": self.EMAIL
             },
             "name": self.NAME,
-            "is_junior_fellow": self.IS_JUNIOR_FELLOW,
+            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
             "campus": self.CAMPUS,
             "batch": self.BATCH,
-            "phone_number": {
-                "country_code": self.COUNTRY_CODE,
+            "phoneNumber": {
+                "countryCode": self.COUNTRY_CODE,
                 "number": self.NUMBER
             }
         }
@@ -81,7 +81,7 @@ class RegistrationAPITest(APITestCase):
         self._test_register_missing_required_field('name')
 
     def test_register_missing_jf(self):
-        self._test_register_missing_required_field('is_junior_fellow')
+        self._test_register_missing_required_field('isJuniorFellow')
 
     def test_register_missing_campus(self):
         self._test_register_missing_required_field('campus')
@@ -90,7 +90,7 @@ class RegistrationAPITest(APITestCase):
         self._test_register_missing_required_field('batch')
 
     def test_register_missing_phone(self):
-        self._test_register_missing_required_field('phone_number')
+        self._test_register_missing_required_field('phoneNumber')
 
     def test_register_same_email(self):
         url = reverse('register')
@@ -99,11 +99,11 @@ class RegistrationAPITest(APITestCase):
                 "email": self.EMAIL
             },
             "name": self.NAME,
-            "is_junior_fellow": self.IS_JUNIOR_FELLOW,
+            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
             "campus": self.CAMPUS,
             "batch": self.BATCH,
-            "phone_number": {
-                "country_code": self.COUNTRY_CODE,
+            "phoneNumber": {
+                "countryCode": self.COUNTRY_CODE,
                 "number": self.NUMBER
             }
         }
@@ -152,15 +152,16 @@ class RegistrationStatusAPITest(APITestCase):
                 "email": self.EMAIL
             },
             "name": self.NAME,
-            "is_junior_fellow": self.IS_JUNIOR_FELLOW,
+            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
             "campus": self.CAMPUS,
             "batch": self.BATCH,
-            "phone_number": {
-                "country_code": self.COUNTRY_CODE,
+            "phoneNumber": {
+                "countryCode": self.COUNTRY_CODE,
                 "number": self.NUMBER
             }
         }
         response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_registration_status_active(self):
         self._register_user()
@@ -173,7 +174,7 @@ class RegistrationStatusAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('type', None),
                          self.RESPONSE_TYPE_SUCCESS)
-        self.assertEqual(response.data.get('is_active', None), True)
+        self.assertEqual(response.data.get('isApproved', None), True)
 
     def test_registration_status_pending(self):
         self._register_user()
@@ -183,7 +184,7 @@ class RegistrationStatusAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('type', None),
                          self.RESPONSE_TYPE_SUCCESS)
-        self.assertEqual(response.data.get('is_active', None), False)
+        self.assertEqual(response.data.get('isApproved', None), False)
 
     def test_registration_status_unknown_user(self):
         self._register_user()
