@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from authentication.models import AppUser, PhoneNumber, Profile, ExpiringToken
 
+AUTH_PROVIDERS = ['GOOGLE', 'WECHAT', 'MF']
 
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,10 +18,19 @@ class PhoneNumberSerializer(serializers.ModelSerializer):
         fields = ['number', 'countryCode']
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class _ProfileSerializer(serializers.ModelSerializer):
     user = AppUserSerializer()
     isJuniorFellow = serializers.BooleanField(source='is_junior_fellow')
     points = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'name', 'isJuniorFellow',
+                  'campus', 'batch', 'points', 'phoneNumber']
+        depth = 1
+
+
+class ProfileCreateSerializer(_ProfileSerializer):
     phoneNumber = PhoneNumberSerializer(source='phone_number')
 
     def create(self, validated_data):
@@ -35,11 +45,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         return profile
 
-    class Meta:
-        model = Profile
-        fields = ['user', 'name', 'isJuniorFellow',
-                  'campus', 'batch', 'points', 'phoneNumber']
-        depth = 1
+
+class ProfileReadSerializer(_ProfileSerializer):
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
 
 
 class RegistrationStatusSerializer(serializers.Serializer):
@@ -53,3 +61,9 @@ class RegistrationStatusSerializer(serializers.Serializer):
 
         else:
             return None
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    token = serializers.CharField(required=True)
+    authProvider = serializers.ChoiceField(AUTH_PROVIDERS, required=True)
