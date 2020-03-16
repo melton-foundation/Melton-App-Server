@@ -33,3 +33,8 @@
 The opened webpage looks as below if opened on Firefox
 
 ![Application start](images/application-start.png)
+
+
+### Environment file
+The secret keys and other info used in the app, but that cannot be put on source control should be present .env file inside folder [api](../app/api/)  
+Follow the instructions in [.env.template](../app/api/.env.template) to setup the .env file

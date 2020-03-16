@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from datetime import timedelta
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -130,3 +133,8 @@ TOKEN_SETTINGS = {
     'IDLE_TOKEN_LIFESPAN' : timedelta(hours=1),
     'EXPIRING_TOKEN_LIFESPAN': timedelta(days=14)
 }
+
+
+# Secrets
+GAUTH_CLIENT_ID = env.str('GAUTH_CLIENT_ID')
+GAUTH_SECRET_ID = env.str('GAUTH_CLIENT_SECRET')
