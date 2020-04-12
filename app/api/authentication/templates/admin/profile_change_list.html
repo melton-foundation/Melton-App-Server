@@ -1,0 +1,61 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+    {{ block.super }}
+<script>
+
+
+function getLabel(text, forName){
+    const label = document.createElement("label");
+    label.setAttribute("for", forName);
+    label.innerText = text;
+    label.style.display = "inline-block";
+    label.style.margin = "auto 10px auto 10px";
+    return label;
+}
+
+function getNumberInputField(name, value, min){
+    const inputField = document.createElement("input");
+    inputField.setAttribute("name", name);
+    inputField.setAttribute("class", "vIntegerField");
+    inputField.setAttribute("type", "number");
+    inputField.setAttribute("min", min);
+    inputField.setAttribute("value", value);
+    return inputField;
+}
+
+function insertPointsInput(){
+    const dom = document.getElementById("action-inputs");
+    
+    const selectedAction = document.querySelector('select[name="action"]').value;
+    dom.innerHTML = "";
+    const div = document.createElement("div")
+    div.style.margin = "auto 10px auto 10px";
+    let label, inputField;
+    switch (selectedAction) {
+        case "add_points":
+            label = getLabel("How many points to add?", "points");
+            inputField = getNumberInputField("points", 0, 0);
+            dom.append(div)
+            div.append(label)
+            div.append(inputField);
+            break;
+        case "reduce_points":
+            label = getLabel("How many points to reduce by?", "points");
+            inputField = getNumberInputField("points", 0, 0);
+            dom.append(div)
+            div.append(label)
+            div.append(inputField);
+            break;
+        default:
+            break;
+    }
+}
+
+document.querySelector('select[name="action"]').addEventListener("change", insertPointsInput);
+
+
+
+//# sourceURL=profile_list.js
+</script>
+{% endblock %}
