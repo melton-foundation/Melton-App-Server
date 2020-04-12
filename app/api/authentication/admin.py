@@ -39,12 +39,30 @@ class PhoneNumberInline(admin.StackedInline):
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
-
+    list_display = ('user', 'name', 'campus', 'batch', 'points')
+    actions = ['add_points', 'reduce_points']
     inlines = [
         PhoneNumberInline
     ]
+    list_editable = ('points', )
+    change_list_template = 'admin/profile_change_list.html'
+    search_fields = ('user__email', 'name', 'campus')
 
+    def add_points(self, request, queryset):
+        points = request.POST.get("points", 0)
+        for user in queryset:
+            user.points += int(points)
+            user.save()
+        self.message_user(request, f'{points} Points were added successfully to all selected accounts.')
 
+    def reduce_points(self, request, queryset):
+        points = request.POST.get('points', 0)
+        for user in queryset:
+            user.points -= int(points)
+            user.save()
+        self.message_user(request, f'{points} Points were removed from all selected accounts.')
+
+admin.site.site_header = 'Melton Foundation Dashboard'
 admin.site.unregister(Token)
 admin.site.register(ExpiringToken, TokenAdmin)
 admin.site.register(AppUser, AppUserAdmin)
