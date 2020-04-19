@@ -3,7 +3,7 @@ from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from authentication.models import AppUser, Profile
+from authentication.models import AppUser, Profile, ExpiringToken
 
 
 class RegistrationAPITest(APITestCase):
@@ -203,3 +203,116 @@ class RegistrationStatusAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data.get('type', None),
                          self.RESPONSE_TYPE_FAILURE)
+
+
+class ProfileAPITest(APITestCase):
+    EMAIL = 'test@email.com'
+    ALTERNATE_EMAIL = 'test@gmail.com'
+    NAME = 'test'
+    IS_JUNIOR_FELLOW = True
+    CAMPUS = 'University of the World'
+    BATCH = 2020
+    NUMBER = '99999999999'
+    COUNTRY_CODE = '+91'
+    POINTS = 0
+
+    RESPONSE_TYPE_SUCCESS = "success"
+    RESPONSE_TYPE_FAILURE = "failure"
+
+    def _build_url(self, *args, **kwargs):
+        get = kwargs.pop('get', {})
+        url = reverse(*args, **kwargs)
+        if get:
+            url += '?' + urlencode(get)
+        return url
+
+    def setUp(self):
+        self.profile = Profile.objects.create(email=self.EMAIL, name=self.NAME,
+                                              is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
+                                              batch=self.BATCH, number=self.NUMBER, country_code=self.COUNTRY_CODE)
+        self.user = self.profile.user
+        self.token = ExpiringToken.objects.get(user=self.user)
+
+        self.data = {
+            "user": {
+                "email": self.EMAIL
+            },
+            "name": self.NAME,
+            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
+            "campus": self.CAMPUS,
+            "batch": self.BATCH,
+            "points": self.POINTS,
+            "phoneNumber": [{
+                            "countryCode": self.COUNTRY_CODE,
+                            "number": self.NUMBER
+                            }]
+        }
+
+    def _test_update_field(self, field, value):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('profile')
+        self.data[field] = value
+        response = self.client.post(url, self.data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('type', None),
+                         self.RESPONSE_TYPE_SUCCESS)
+        return response
+
+    def test_get_profile(self):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('profile')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('type', None),
+                         self.RESPONSE_TYPE_SUCCESS)
+        profile = response.data.get('profile')
+        self.assertEqual(profile.get('user').get('email'), self.EMAIL)
+        self.assertEqual(profile.get('name'), self.NAME)
+        self.assertEqual(profile.get('isJuniorFellow'), self.IS_JUNIOR_FELLOW)
+        self.assertEqual(profile.get('campus'), self.CAMPUS)
+        self.assertEqual(profile.get('batch'), self.BATCH)
+        self.assertEqual(profile.get('points'), self.POINTS)
+        self.assertEqual(profile.get('phoneNumber')[
+                         0].get('number'), self.NUMBER)
+        self.assertEqual(profile.get('phoneNumber')[0].get(
+            'countryCode'), self.COUNTRY_CODE)
+
+    def test_cant_update_points(self):
+        points = 100
+        response = self._test_update_field("points", points)
+        self.assertNotEqual(response.data.get("profile").get("points"), points)
+
+    def test_cant_update_is_junior_fellow(self):
+        is_junior_fellow = False
+        response = self._test_update_field("isJuniorFellow", is_junior_fellow)
+        self.assertNotEqual(response.data.get("profile").get("isJuniorFellow"), is_junior_fellow)
+
+    def test_update_name(self):
+        name = "suhas"
+        response = self._test_update_field("name", name)
+        self.assertEqual(response.data.get("profile").get("name"), name)
+
+    def test_update_campus(self):
+        campus = "BMS"
+        response = self._test_update_field("campus", campus)
+        self.assertEqual(response.data.get("profile").get("campus"), campus)
+
+    def test_update_batch(self):
+        batch = 2021
+        response = self._test_update_field("batch", batch)
+        self.assertEqual(response.data.get("profile").get("batch"), batch)
+
+    def test_update_phone_numbers(self):
+        phone_numbers = [
+            {
+                'number': '1111',
+                'countryCode': '+91'
+            },
+            {
+                'number': '2222',
+                'countryCode': '+92'
+            }
+        ]
+        response = self._test_update_field("phoneNumber", phone_numbers)
+        self.assertListEqual(response.data.get(
+            "profile").get("phoneNumber"), phone_numbers)
