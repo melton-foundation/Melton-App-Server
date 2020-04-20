@@ -18,4 +18,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: meltondevops/melton-app-server
           tags: latest
-          path: ./app/Dockerfile
+          path: ./app
