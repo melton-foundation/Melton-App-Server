@@ -11,6 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@master
       # This step uses docker's github action: https://github.com/marketplace/actions/build-and-push-docker-images
+      - shell: bash
+        env:
+          GAUTH_CLIENT_ID: ${{ secrets.GAUTH_CLIENT_ID }}
+        run: 'echo "GAUTH_CLIENT_SECRET=$GAUTH_CLIENT_SECRET" > app/api/.env'
+      - shell: bash
+          env:
+            GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
+          run: 'echo "GAUTH_CLIENT_SECRET=GAUTH_CLIENT_SECRET" >> app/api/.env'
       - name: docker-build-push
         uses: docker/build-push-action@v1
         with:
