@@ -1,0 +1,19 @@
+name: docker image build and push
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build-push:
+    # Job name is Greeting
+    name: docker build-push
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      # This step uses docker's github action: https://github.com/marketplace/actions/build-and-push-docker-images
+      - name: docker-build-push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: meltondevops/melton-app-server
+          tags: latest
