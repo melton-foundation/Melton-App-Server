@@ -9,6 +9,7 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@deployment-integration
       # This step uses docker's github action: https://github.com/marketplace/actions/build-and-push-docker-images
       - name: docker-build-push
         uses: docker/build-push-action@v1
