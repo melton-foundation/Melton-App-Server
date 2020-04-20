@@ -14,7 +14,7 @@ jobs:
       - shell: bash
         env:
           GAUTH_CLIENT_ID: ${{ secrets.GAUTH_CLIENT_ID }}
-        run: 'echo "GAUTH_CLIENT_SECRET=$GAUTH_CLIENT_SECRET" > app/api/.env'
+        run: 'echo "GAUTH_CLIENT_ID=GAUTH_CLIENT_ID" > app/api/.env'
       - shell: bash
         env:
           GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
