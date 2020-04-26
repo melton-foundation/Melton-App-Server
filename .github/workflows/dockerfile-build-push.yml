@@ -39,7 +39,9 @@ jobs:
         run: |
           mkdir ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.DEPLOY_PUB_KEY }}" > ~/.ssh/id_rsa.pub
           chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa.pub
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
