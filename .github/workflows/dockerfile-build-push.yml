@@ -29,6 +29,12 @@ jobs:
           repository: meltondevops/melton-app-server
           tags: latest
           path: ./app
+  ansible-deploy:
+    name: ansible deploy
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
       - shell: bash
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
@@ -37,3 +43,14 @@ jobs:
           mkdir ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible==2.9.2 requests
+      - name: test ansible host ping
+        run: |
+          ansible -i ./.github/ansible/hosts all  -m ping -u root
