@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       # This step uses docker's github action: https://github.com/marketplace/actions/build-and-push-docker-images
+      # Setting up the .env file first
       - shell: bash
         env:
           GAUTH_CLIENT_ID: ${{ secrets.GAUTH_CLIENT_ID }}
@@ -19,6 +20,7 @@ jobs:
         env:
           GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
         run: 'echo "GAUTH_CLIENT_SECRET=GAUTH_CLIENT_SECRET" >> app/api/.env'
+      # Push docker image to dockerhub after building
       - name: docker-build-push
         uses: docker/build-push-action@v1
         with:
@@ -27,3 +29,11 @@ jobs:
           repository: meltondevops/melton-app-server
           tags: latest
           path: ./app
+      - shell: bash
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          eval "$(ssh-agent -s)"
+          mkdir ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
