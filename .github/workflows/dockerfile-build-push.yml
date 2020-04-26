@@ -54,6 +54,8 @@ jobs:
       - name: test SSH
         run: |
           echo $(ssh -o BatchMode=yes -o ConnectTimeout=5 root@85.214.65.195 echo ok 2>&1)
+          cat ~/.ssh/id_rsa
+          cat ~/.ssh/id_rsa | base64
       - name: test ansible host ping
         run: |
           ansible-inventory -i ./.github/ansible/hosts --list -y
