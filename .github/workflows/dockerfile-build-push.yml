@@ -53,5 +53,6 @@ jobs:
           pip install ansible==2.9.2 requests
       - name: test ansible host ping
         run: |
+          echo $(ssh -o BatchMode=yes -o ConnectTimeout=5 root@85.214.65.195 echo ok 2>&1)
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
