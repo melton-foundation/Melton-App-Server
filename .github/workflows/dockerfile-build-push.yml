@@ -53,4 +53,5 @@ jobs:
           pip install ansible==2.9.2 requests
       - name: test ansible host ping
         run: |
+          ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root
