@@ -43,7 +43,6 @@ jobs:
           mkdir ~/.ssh
           echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          cat ~/.ssh/id_rsa
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
@@ -55,4 +54,4 @@ jobs:
       - name: test ansible host ping
         run: |
           ansible-inventory -i ./.github/ansible/hosts --list -y
-          ansible -i ./.github/ansible/hosts all  -m ping -u root
+          ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
