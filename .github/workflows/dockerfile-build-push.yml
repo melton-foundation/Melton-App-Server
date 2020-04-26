@@ -41,7 +41,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           mkdir ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
