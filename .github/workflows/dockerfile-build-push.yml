@@ -40,9 +40,9 @@ jobs:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
           eval "$(ssh-agent -s)"
-          mkdir ~/.ssh
-          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+#          mkdir ~/.ssh
+          ssh-add - <<< "${DEPLOY_KEY}"
+#          chmod 600 ~/.ssh/id_rsa
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
