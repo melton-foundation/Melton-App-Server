@@ -57,4 +57,4 @@ jobs:
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
-          ansible-playbook -i ./.github/ansible/hosts all ./.github/ansible/docker_playbook.yml
+          ansible-playbook -i ./.github/ansible/hosts ./.github/ansible/docker_playbook.yml
