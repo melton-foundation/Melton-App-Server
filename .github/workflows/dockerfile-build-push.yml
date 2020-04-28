@@ -67,5 +67,7 @@ jobs:
             ls -al
       - name: test ansible host ping
         run: |
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
