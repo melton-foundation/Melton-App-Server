@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   vars:
-    create_containers: 4
+    create_containers: 1
     default_container_name: docker
     default_container_image: ubuntu
     default_container_command: sleep 1d
