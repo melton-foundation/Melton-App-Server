@@ -62,7 +62,8 @@ jobs:
       - name: test ansible host ping
         run: |
           eval "$(ssh-agent -s)"
+          export ANSIBLE_HOST_KEY_CHECKING=False
           ssh-add ~/.ssh/id_rsa
-          ssh root@85.214.65.195 "ls"
+          ssh -o StrictHostKeyChecking=no root@85.214.65.195 "ls"
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
