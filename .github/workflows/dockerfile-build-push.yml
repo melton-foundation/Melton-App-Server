@@ -50,6 +50,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ansible==2.9.2 requests
+      - name: multiple command
+        uses: appleboy/ssh-action@master
+        with:
+          host: 85.214.65.195
+          username: root
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            whoami
+            ls -al
       - name: test ansible host ping
         run: |
           eval "$(ssh-agent -s)"
