@@ -61,6 +61,7 @@ jobs:
           host: 85.214.65.195
           username: root
           key: ${{ secrets.DEPLOY_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             whoami
             ls -al
