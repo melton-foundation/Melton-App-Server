@@ -42,7 +42,6 @@ jobs:
           echo "${{ secrets.DEPLOY_PUB_KEY }}" > ~/.ssh/id_rsa.pub
           chmod 600 ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa.pub
-          export ANSIBLE_HOST_KEY_CHECKING=False
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
       - name: Set up Python 3.7
@@ -55,5 +54,6 @@ jobs:
           pip install ansible==2.9.2 requests
       - name: test ansible host ping
         run: |
+          export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
