@@ -50,12 +50,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ansible==2.9.2 requests
-      - name: test SSH
-        run: |
-          echo $(ssh -o BatchMode=yes -o ConnectTimeout=5 root@85.214.65.195 echo ok 2>&1)
       - name: test ansible host ping
         run: |
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
+          ssh root@85.214.65.195 "ls"
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
