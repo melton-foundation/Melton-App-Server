@@ -46,6 +46,6 @@
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}:{{ container_tag }}"
         ports:
-          - "8000:8000"
+          - "{{ src_port }}:{{ dest_port }}"
         state: present
       with_sequence: count={{ create_containers }}
