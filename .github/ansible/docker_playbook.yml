@@ -36,8 +36,8 @@
 
     - name: Log into DockerHub
       docker_login:
-        username: docker_username
-        password: docker_password
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
 
     - name: Pull default Docker image
       docker_image:
