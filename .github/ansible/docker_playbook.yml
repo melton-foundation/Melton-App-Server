@@ -3,9 +3,8 @@
   become: true
   vars:
     create_containers: 1
-    default_container_name: docker
-    default_container_image: ubuntu
-    default_container_command: sleep 1d
+    default_container_name: melton-app
+    default_container_image: meltondevops/melton-app-server:${GITHUB_REF#refs/*/}
 
   tasks:
     - name: Install aptitude using apt
@@ -41,6 +40,5 @@
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}"
-        command: "{{ default_container_command }}"
         state: present
       with_sequence: count={{ create_containers }}
