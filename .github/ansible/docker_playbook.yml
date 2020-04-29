@@ -8,6 +8,8 @@
     container_tag: "{{ DOCKER_TAG }}"
     docker_username: "{{ DOCKER_USERNAME }}"
     docker_password: "{{ DOCKER_PASSWORD }}"
+    src_port: 8000
+    dest_port: 8000
 
   tasks:
     - name: Install aptitude using apt
@@ -43,5 +45,7 @@
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}:{{ container_tag }}"
+        ports:
+          - "{{ src_port }}:{{ dest_port }}"
         state: present
       with_sequence: count={{ create_containers }}
