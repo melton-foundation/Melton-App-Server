@@ -53,7 +53,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa.pub
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
-          echo "${GITHUB_REF:10}"
+          echo "${GITHUB_REF#refs/*/}"
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
@@ -64,7 +64,7 @@ jobs:
           pip install ansible==2.9.2 requests
       - name: test ansible host ping
         run: |
-          echo "${GITHUB_REF:10}"
+          echo "${GITHUB_REF#refs/*/}"
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
