@@ -41,7 +41,7 @@
 
     - name: Pull default Docker image
       docker_image:
-        name: "{{ default_container_image }}"
+        name: "{{ default_container_image }}:{{ container_tag }}"
         source: pull
 
     - name: Create default containers
