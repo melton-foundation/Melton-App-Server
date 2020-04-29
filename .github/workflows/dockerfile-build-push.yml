@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: meltondevops/melton-app-server
-          tags: ${GITHUB_REF#refs/*/}
+          tags: "${GITHUB_REF#refs/*/}"
           path: ./app
   ansible-deploy:
     needs: build-push
@@ -60,4 +60,4 @@ jobs:
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
-          ansible-playbook -i ./.github/ansible/hosts ./.github/ansible/docker_playbook.yml
+          ansible-playbook -i ./.github/ansible/hosts --extra-vars "DOCKER_TAG=${GITHUB_REF#refs/*/}" ./.github/ansible/docker_playbook.yml

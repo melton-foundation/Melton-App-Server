@@ -4,7 +4,7 @@
   vars:
     create_containers: 1
     default_container_name: melton-app
-    default_container_image: meltondevops/melton-app-server:${GITHUB_REF#refs/*/}
+    default_container_image: meltondevops/melton-app-server:{{ DOCKER_TAG }}
 
   tasks:
     - name: Install aptitude using apt
