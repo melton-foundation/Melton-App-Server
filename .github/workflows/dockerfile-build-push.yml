@@ -4,12 +4,11 @@ on: [push]
 
 jobs:
   build-push:
-    # Job name is Greeting
-    name: docker build-push
     on:
       push:
         tags:
           - 'v*.*.*'
+    name: docker build-push
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
@@ -34,12 +33,12 @@ jobs:
           tags: latest
           path: ./app
   ansible-deploy:
-    name: ansible deploy
     on:
       push:
         tags:
           - 'v*.*.*'
     needs: build-push
+    name: ansible deploy
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
