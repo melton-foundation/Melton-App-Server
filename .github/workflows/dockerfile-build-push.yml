@@ -61,4 +61,5 @@ jobs:
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
+          echo "Running deployment for tag: ${{ startsWith(github.ref, 'refs/tags/') }}"
           ansible-playbook -i ./.github/ansible/hosts --extra-vars "DOCKER_TAG=${{ startsWith(github.ref, 'refs/tags/') }} DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}" ./.github/ansible/docker_playbook.yml

@@ -39,12 +39,6 @@
         username: "{{ docker_username }}"
         password: "{{ docker_password }}"
 
-    - name: Pull default Docker image
-      docker_image:
-        name: "{{ default_container_image }}"
-        tag: "{{ container_tag }}"
-        source: pull
-
     - name: Create default containers
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
