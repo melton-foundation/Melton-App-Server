@@ -5,6 +5,8 @@
     create_containers: 1
     default_container_name: melton-app
     default_container_image: meltondevops/melton-app-server:{{ DOCKER_TAG }}
+    docker_username: {{ DOCKER_USERNAME }}
+    docker_password: {{ DOCKER_PASSWORD }}
 
   tasks:
     - name: Install aptitude using apt
@@ -30,6 +32,11 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
+
+    - name: Log into DockerHub
+      docker_login:
+        username: docker_username
+        password: docker_password
 
     - name: Pull default Docker image
       docker_image:
