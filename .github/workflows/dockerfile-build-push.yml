@@ -6,6 +6,10 @@ jobs:
   build-push:
     # Job name is Greeting
     name: docker build-push
+    on:
+      push:
+        tags:
+          - 'v*.*.*'
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
@@ -31,6 +35,11 @@ jobs:
           path: ./app
   ansible-deploy:
     name: ansible deploy
+    on:
+      push:
+        tags:
+          - 'v*.*.*'
+    needs: build-push
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +53,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa.pub
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
+          echo "${GITHUB_REF:10}"
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
@@ -54,6 +64,7 @@ jobs:
           pip install ansible==2.9.2 requests
       - name: test ansible host ping
         run: |
+          echo "${GITHUB_REF:10}"
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-inventory -i ./.github/ansible/hosts --list -y
           ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
