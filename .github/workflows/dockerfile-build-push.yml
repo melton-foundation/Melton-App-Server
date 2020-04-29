@@ -1,13 +1,12 @@
 name: docker image build and push
 # This workflow is triggered on pushes to the repository.
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build-push:
-    on:
-      push:
-        tags:
-          - 'v*.*.*'
     name: docker build-push
     # This job runs on Linux
     runs-on: ubuntu-latest
@@ -33,10 +32,6 @@ jobs:
           tags: latest
           path: ./app
   ansible-deploy:
-    on:
-      push:
-        tags:
-          - 'v*.*.*'
     needs: build-push
     name: ansible deploy
     # This job runs on Linux
