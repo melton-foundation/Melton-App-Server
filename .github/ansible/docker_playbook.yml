@@ -4,9 +4,10 @@
   vars:
     create_containers: 1
     default_container_name: melton-app
-    default_container_image: meltondevops/melton-app-server:{{ DOCKER_TAG }}
-    docker_username: {{ DOCKER_USERNAME }}
-    docker_password: {{ DOCKER_PASSWORD }}
+    default_container_image: meltondevops/melton-app-server
+    container_tag: "{{ DOCKER_TAG }}"
+    docker_username: "{{ DOCKER_USERNAME }}"
+    docker_password: "{{ DOCKER_PASSWORD }}"
 
   tasks:
     - name: Install aptitude using apt
@@ -46,6 +47,6 @@
     - name: Create default containers
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
-        image: "{{ default_container_image }}"
+        image: "{{ default_container_image }}:{{ container_tag }}"
         state: present
       with_sequence: count={{ create_containers }}
