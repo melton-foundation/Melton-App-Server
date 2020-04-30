@@ -1,0 +1,53 @@
+---
+- hosts: all
+  become: true
+  vars:
+    create_containers: 1
+    default_container_name: melton-app
+    default_container_image: meltondevops/melton-app-server
+    container_tag: "{{ DOCKER_TAG }}"
+    docker_username: "{{ DOCKER_USERNAME }}"
+    docker_password: "{{ DOCKER_PASSWORD }}"
+    src_port: 8000
+    dest_port: 8000
+
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu xenial stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Log into DockerHub
+      docker_login:
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
+
+    - name: Create default containers
+      docker_container:
+        name: "{{ default_container_name }}{{ item }}"
+        image: "{{ default_container_image }}:{{ container_tag }}"
+        ports:
+          - "{{ src_port }}:{{ dest_port }}"
+        volumes:
+          - /root/melton-app/staticfiles:/code/api/static/
+        state: started
+      with_sequence: count={{ create_containers }}

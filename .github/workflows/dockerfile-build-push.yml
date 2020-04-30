@@ -1,0 +1,65 @@
+name: docker image build and push
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-push:
+    name: docker build-push
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      # This step uses docker's github action: https://github.com/marketplace/actions/build-and-push-docker-images
+      # Setting up the .env file first
+      - shell: bash
+        env:
+          GAUTH_CLIENT_ID: ${{ secrets.GAUTH_CLIENT_ID }}
+        run: 'echo "GAUTH_CLIENT_ID=GAUTH_CLIENT_ID" > app/api/.env'
+      - shell: bash
+        env:
+          GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
+        run: 'echo "GAUTH_CLIENT_SECRET=GAUTH_CLIENT_SECRET" >> app/api/.env'
+      # Push docker image to dockerhub after building
+      - name: docker-build-push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: meltondevops/melton-app-server
+          tag_with_ref: true
+          push: ${{ startsWith(github.ref, 'refs/tags/') }}
+          path: ./app
+  ansible-deploy:
+    needs: build-push
+    name: ansible deploy
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - shell: bash
+        run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.DEPLOY_PUB_KEY }}" > ~/.ssh/id_rsa.pub
+          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa.pub
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible==2.9.2 requests
+      - name: Run ansible playbook
+        run: |
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          ansible-inventory -i ./.github/ansible/hosts --list -y
+          ansible -i ./.github/ansible/hosts all  -m ping -u root -vvv
+          echo "Running deployment for tag: ${GITHUB_REF#refs/*/}"
+          ansible-playbook -i ./.github/ansible/hosts --extra-vars "DOCKER_TAG=${GITHUB_REF#refs/*/} DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}" ./.github/ansible/docker_playbook.yml

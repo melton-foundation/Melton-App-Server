@@ -1,0 +1,6 @@
+[servers]
+indenwolken ansible_host=85.214.65.195
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=root
