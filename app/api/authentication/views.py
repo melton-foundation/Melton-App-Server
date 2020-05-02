@@ -28,3 +28,7 @@ class ProfileView(APIView):
     def get(self, request):
         response, status = services.get_profile(user = request.user)
         return Response(response, status=status)
+
+    def post(self, request):
+        response, status = services.update_profile(request.user, request.data)
+        return Response(response, status=status)

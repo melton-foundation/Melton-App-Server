@@ -3,7 +3,7 @@ from rest_framework import status
 from authentication.models import AppUser, ExpiringToken, Profile
 from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
-                                        ProfileReadSerializer,
+                                        ProfileReadUpdateSerializer,
                                         RegistrationStatusSerializer)
 from django.conf import settings
 from authentication.authentication import GoogleOauth, WeChatOauth
@@ -108,21 +108,36 @@ def _get_auth_client(email, token, auth_provider):
 
 
 def get_profile(user=None, email=None):
-    serializer = ProfileReadSerializer()
+    serializer = ProfileReadUpdateSerializer()
     if user is not None:
         profile = Profile.objects.prefetch_related(
             "phone_number").get(user=user)
-        serializer = ProfileReadSerializer(profile)
+        serializer = ProfileReadUpdateSerializer(profile)
     elif email is not None:
         user = AppUser.objects.get(email=email)
         profile = Profile.objects.prefetch_related(
             "phone_number").get(user=user)
-        serializer = ProfileReadSerializer(profile)
+        serializer = ProfileReadUpdateSerializer(profile)
 
     response = {"type": "success", "profile": serializer.data}
     response_status = status.HTTP_200_OK
 
     return response, response_status
+
+def update_profile(user, data):
+    profile = Profile.objects.prefetch_related(
+            "phone_number").get(user=user)
+    serializer = ProfileReadUpdateSerializer(profile, data=data)
+    if serializer.is_valid():
+        serializer.save()
+
+        response_status = status.HTTP_200_OK
+        response = {"type": "success", "profile": serializer.data}
+    else:
+        response, response_status = _form_bad_request_response(serializer.errors)
+
+    return response, response_status
+    
 
 
 def _form_bad_request_response(errors):

@@ -46,8 +46,26 @@ class ProfileCreateSerializer(_ProfileSerializer):
         return profile
 
 
-class ProfileReadSerializer(_ProfileSerializer):
+class ProfileReadUpdateSerializer(_ProfileSerializer):
     phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
+    user = AppUserSerializer(read_only=True)
+    points = serializers.IntegerField(read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.campus = validated_data.get('campus', instance.campus)
+        instance.batch = validated_data.get('batch', instance.batch)
+        _ph_query = PhoneNumber.objects.filter(user_profile = instance)
+        existing_phone_numbers = list(_ph_query)
+        _ph_query.delete()
+        for phone_number in validated_data.get('phone_number', existing_phone_numbers):
+            phone_number_obj = PhoneNumber(user_profile = instance, country_code = phone_number['country_code'], 
+                                        number = phone_number['number'])
+            phone_number_obj.save()
+        instance.save()
+        instance.refresh_from_db()
+        return instance
+
 
 
 class RegistrationStatusSerializer(serializers.Serializer):
