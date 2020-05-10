@@ -45,7 +45,6 @@ class OauthSignIn(ABC):
         self.claimed_email = claimed_email
         self.token = token
         self.idinfo = None
-        # print("---------------------------------\n\n", token, "----------------------------------------------\n")
 
     def check_claim(self, verified_email):
         return self.claimed_email == verified_email

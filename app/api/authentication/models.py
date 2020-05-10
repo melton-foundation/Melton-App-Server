@@ -99,6 +99,10 @@ class Profile(models.Model):
 
     objects = ProfileManager()
 
+    def deduct_points(self, points):
+        self.points -= points
+        self.save()
+
     def __str__(self):
         return f'{self.name} - {self.user}'
 

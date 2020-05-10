@@ -7,7 +7,7 @@ services:
             -   8000
         volumes: 
             -   ./staticfiles:/code/api/static/
-        command: [sh, -c, "python manage.py collectstatic --noinput && gunicorn api.wsgi --bind 0.0.0.0:8000"]
+        command: [sh, -c, "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn api.wsgi --bind 0.0.0.0:8000"]
     nginx:
         build: './nginx'
         container_name: 'nginx'
