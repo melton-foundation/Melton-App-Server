@@ -55,4 +55,5 @@
           loki-url: http://localhost:3100/api/prom/push
           loki-retries: 5
           loki-batch-size: 400
+          loki-external-labels: tag=melton
       with_sequence: count={{ create_containers }}
