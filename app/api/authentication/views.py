@@ -1,9 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework import filters
 
 from authentication import services, authentication
-
+from authentication.models import Profile
+from authentication.serializers import ProfileListSerializer
 
 @api_view(['POST'])
 def register(request):
@@ -32,3 +35,13 @@ class ProfileView(APIView):
     def post(self, request):
         response, status = services.update_profile(request.user, request.data)
         return Response(response, status=status)
+
+
+
+class UsersView(ReadOnlyModelViewSet):
+    authentication_classes = [authentication.ExpiringTokenAuthentication]
+    search_fields = ['name', 'user__email']
+    filter_backends = (filters.SearchFilter,)
+    queryset = Profile.objects.all()
+    serializer_class = ProfileListSerializer
+    

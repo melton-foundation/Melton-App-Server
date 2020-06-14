@@ -81,12 +81,24 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
+    'dev': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'prod': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env.str('DB_NAME', default='melton_foundation'),
+        'USER': env.str('DB_USER', default='user'),
+        'PASSWORD': env.str('DB_PASSWORD', default='password'),
+        'HOST': env.str('DB_HOST', default='localhost'),
+        'PORT': env.str('DB_PORT', default='5432'),
     }
 }
+
+default_database = env.str('DB_DEFAULT', 'dev')
+DATABASES['default'] = DATABASES[default_database]
 
 
 # Password validation

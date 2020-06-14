@@ -22,6 +22,7 @@ class _ProfileSerializer(serializers.ModelSerializer):
     user = AppUserSerializer()
     isJuniorFellow = serializers.BooleanField(source='is_junior_fellow')
     points = serializers.IntegerField(read_only=True)
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
 
     class Meta:
         model = Profile
@@ -29,6 +30,15 @@ class _ProfileSerializer(serializers.ModelSerializer):
                   'campus', 'batch', 'points', 'phoneNumber']
         depth = 1
 
+class ProfileListSerializer(_ProfileSerializer):
+    id = serializers.IntegerField(source='user.id')
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'name', 'isJuniorFellow',
+                  'campus', 'batch', 'points', 'phoneNumber']
+        depth = 1
 
 class ProfileCreateSerializer(_ProfileSerializer):
     phoneNumber = PhoneNumberSerializer(source='phone_number')
@@ -65,7 +75,6 @@ class ProfileReadUpdateSerializer(_ProfileSerializer):
         instance.save()
         instance.refresh_from_db()
         return instance
-
 
 
 class RegistrationStatusSerializer(serializers.Serializer):
