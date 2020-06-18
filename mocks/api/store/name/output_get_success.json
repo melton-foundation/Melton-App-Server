@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "MFC 2020 Virtual",
+        "description": "Normal conference",
+        "points": 200,
+        "active": true,
+        "purchased": false
+    },
+    {
+        "id": 2,
+        "name": "MFC 2021 Virtual",
+        "description": "Common Conference",
+        "points": 200,
+        "active": true,
+        "purchased": false
+    }
+]

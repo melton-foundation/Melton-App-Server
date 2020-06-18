@@ -1,0 +1,7 @@
+{
+    "type": "success",
+    "message": "Successfully bought.",
+    "details": {
+        "availablePoints": 1800
+    }
+}

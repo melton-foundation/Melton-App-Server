@@ -1,0 +1,74 @@
+[
+    {
+        "id": 3,
+        "user": {
+            "email": "user1@test.com"
+        },
+        "name": "user1",
+        "isJuniorFellow": true,
+        "campus": "test campus",
+        "batch": 2018,
+        "points": 0,
+        "phoneNumber": [
+            {
+                "number": "9876543210",
+                "countryCode": "+91"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "user": {
+            "email": "user2@test.com"
+        },
+        "name": "user2",
+        "isJuniorFellow": true,
+        "campus": "test campus",
+        "batch": 2018,
+        "points": 0,
+        "phoneNumber": [
+            {
+                "number": "9876543210",
+                "countryCode": "+91"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "user": {
+            "email": "user3@test.com"
+        },
+        "name": "user3",
+        "isJuniorFellow": true,
+        "campus": "test campus",
+        "batch": 2018,
+        "points": 0,
+        "phoneNumber": [
+            {
+                "number": "9876543210",
+                "countryCode": "+91"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "user": {
+            "email": "test@test.com"
+        },
+        "name": "Test",
+        "isJuniorFellow": true,
+        "campus": "test office",
+        "batch": 2018,
+        "points": 1800,
+        "phoneNumber": [
+            {
+                "number": "9876543210",
+                "countryCode": "+91"
+            },
+            {
+                "number": "9182736450",
+                "countryCode": "+91"
+            }
+        ]
+    }
+]

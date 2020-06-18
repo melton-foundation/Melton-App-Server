@@ -1,0 +1,6 @@
+{
+    "type": "success",
+    "email": "test@test.com",
+    "isApproved": true,
+    "message": "Your registration is Approved"
+}
