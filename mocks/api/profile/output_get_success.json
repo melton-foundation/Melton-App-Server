@@ -1,0 +1,19 @@
+{
+    "type": "success",
+    "profile": {
+        "user": {
+            "email": "test@test.com"
+        },
+        "name": "test",
+        "isJuniorFellow": true,
+        "campus": "test campus",
+        "batch": 2018,
+        "points": 0,
+        "phoneNumber": [
+            {
+                "number": "9876543210",
+                "countryCode": "+91"
+            }
+        ]
+    }
+}
