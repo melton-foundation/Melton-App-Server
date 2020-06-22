@@ -1,5 +1,9 @@
 FROM python:3.6-slim
 
+RUN apt-get update && apt-get install
+RUN apt-get install -y build-essential
+RUN apt-get -y install python3-dev
+RUN apt-get install -y libpq-dev
 RUN mkdir /code
 ADD . /code
 WORKDIR /code
