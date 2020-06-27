@@ -126,6 +126,7 @@ class Profile(models.Model):
     campus = models.CharField(max_length=100)
     batch = models.PositiveIntegerField()
     points = models.PositiveIntegerField(blank=True)
+    picture = models.ImageField(upload_to='profile-pics', blank=True)
 
     objects = ProfileManager()
 
