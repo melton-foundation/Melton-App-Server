@@ -1,5 +1,18 @@
 version: '3'
 services: 
+    db:
+        build: './db'
+        container_name: 'db'
+        expose:
+            - 5432
+        ports:
+            - 1000:5432 # to check whether this is secure or not
+        volumes:
+            - ./db/data:/var/lib/postgresql/data:rw
+        environment:
+            - POSTGRES_USER=mf_admin # all environment variables to be moved
+            - POSTGRES_DB=melton_foundation
+            - POSTGRES_PASSWORD=mf_password
     api:
         build: './app'
         container_name: 'api'
@@ -8,6 +21,8 @@ services:
         volumes: 
             -   ./staticfiles:/code/api/static/
         command: [sh, -c, "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn api.wsgi --bind 0.0.0.0:8000"]
+        depends_on:
+            - db
     nginx:
         build: './nginx'
         container_name: 'nginx'

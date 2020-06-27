@@ -316,3 +316,63 @@ class ProfileAPITest(APITestCase):
         response = self._test_update_field("phoneNumber", phone_numbers)
         self.assertListEqual(response.data.get(
             "profile").get("phoneNumber"), phone_numbers)
+
+
+class UsersAPITest(APITestCase):
+    EMAILS = ['suhas@email.com', 'test1@email.com', 'test2@email.com', 'user1@email.com', 'user2@email.com']
+    NAMES = ['suhas', 'test1', 'test2', 'user1', 'user2']
+    IS_JUNIOR_FELLOW = True
+    CAMPUS = 'University of the World'
+    BATCH = 2020
+    NUMBERS = ['99999999999', '99999999998', '99999999997', '99999999996', '99999999995'] 
+    COUNTRY_CODE = '+91'
+    POINTS = 0
+
+    RESPONSE_TYPE_SUCCESS = "success"
+    RESPONSE_TYPE_FAILURE = "failure"
+
+
+    def _build_url(self, *args, **kwargs):
+        get = kwargs.pop('get', {})
+        url = reverse(*args, **kwargs)
+        if get:
+            url += '?' + urlencode(get)
+        return url
+
+
+    def setUp(self):
+        for index, _ in enumerate(self.EMAILS):
+            profile = Profile.objects.create(email=self.EMAILS[index], name=self.NAMES[index],
+                                                is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
+                                                batch=self.BATCH, number=self.NUMBERS[index], 
+                                                country_code=self.COUNTRY_CODE)
+            user = profile.user
+            token = ExpiringToken.objects.get(user=user)
+
+        self.user = user
+        self.token = token
+
+    def test_list_users(self):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('users')
+        response = self.client.get(url)
+        for index, data in enumerate(response.data):
+            self.assertEqual(data['user']['email'], self.EMAILS[index])
+            self.assertEqual(data['name'], self.NAMES[index])
+
+
+    def test_search_user(self):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('users', get = {'search': 'email'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), len(self.EMAILS))
+
+        url = self._build_url('users', get = {'search': 'suhas'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 1)
+
+        url = self._build_url('users', get = {'search': 'user'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 2)
+
+        
