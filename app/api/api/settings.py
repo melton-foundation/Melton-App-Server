@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'rest_framework',
     'rest_framework.authtoken',
     'authentication',
@@ -151,3 +152,12 @@ TOKEN_SETTINGS = {
 # Secrets
 GAUTH_CLIENT_ID = env.str('GAUTH_CLIENT_ID')
 GAUTH_SECRET_ID = env.str('GAUTH_CLIENT_SECRET')
+
+
+AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_DEFAULT_ACL = None
+
+DEFAULT_FILE_STORAGE = 'api.storage_backends.MediaStorage' 

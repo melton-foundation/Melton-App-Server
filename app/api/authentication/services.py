@@ -6,6 +6,7 @@ from authentication.serializers import (LoginSerializer,
                                         ProfileReadUpdateSerializer,
                                         RegistrationStatusSerializer)
 from django.conf import settings
+from django.core.files import File
 from authentication.authentication import GoogleOauth, WeChatOauth
 from rest_framework import exceptions
 
@@ -76,6 +77,9 @@ def login(data):
             success = auth.login()
 
             if success:
+                extension, picture_file = auth.get_profile_picture()
+                if picture_file is not None:
+                    save_profile_picture(picture_file, extension, email=email)
                 response_status = status.HTTP_200_OK
                 response = {"type": "success",
                             "appToken": get_token(email=email).key,
@@ -137,6 +141,21 @@ def update_profile(user, data):
         response, response_status = _form_bad_request_response(serializer.errors)
 
     return response, response_status
+
+def save_profile_picture(picture_file, extension, user=None, email=None):
+    if user is not None:
+        profile = Profile.objects.get(user=user)
+        email = user.email
+    elif email is not None:
+        user = AppUser.objects.get(email=email)
+        profile = Profile.objects.get(user=user)
+
+    filename = email.split('@')[0] + extension
+    profile.picture.save(filename, picture_file)
+    profile.save()
+
+    if picture_file is not None and isinstance(picture_file, File):
+        picture_file.close()
     
 
 
