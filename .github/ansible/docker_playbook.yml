@@ -42,6 +42,7 @@
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}:{{ container_tag }}"
+        network_mode: host
         ports:
           - "{{ src_port }}:{{ dest_port }}"
         volumes:
