@@ -29,15 +29,15 @@ jobs:
           GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
         run: |
           'echo "GAUTH_CLIENT_ID=GAUTH_CLIENT_ID" > app/api/.env'
-          'echo "AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID" > app/api/.env'
-          'echo "AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY" > app/api/.env'
-          'echo "AWS_STORAGE_BUCKET_NAME=AWS_STORAGE_BUCKET_NAME" > app/api/.env'
-          'echo "DB_DEFAULT=DB_DEFAULT" > app/api/.env'
-          'echo "DB_HOST=DB_HOST" > app/api/.env'
-          'echo "DB_PORT=DB_PORT" > app/api/.env'
-          'echo "DB_NAME=DB_NAME" > app/api/.env'
-          'echo "DB_USER=DB_USER" > app/api/.env'
-          'echo "DB_PASSWORD=DB_PASSWORD" > app/api/.env'
+          'echo "AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID" >> app/api/.env'
+          'echo "AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY" >> app/api/.env'
+          'echo "AWS_STORAGE_BUCKET_NAME=AWS_STORAGE_BUCKET_NAME" >> app/api/.env'
+          'echo "DB_DEFAULT=DB_DEFAULT" >> app/api/.env'
+          'echo "DB_HOST=DB_HOST" >> app/api/.env'
+          'echo "DB_PORT=DB_PORT" >> app/api/.env'
+          'echo "DB_NAME=DB_NAME" >> app/api/.env'
+          'echo "DB_USER=DB_USER" >> app/api/.env'
+          'echo "DB_PASSWORD=DB_PASSWORD" >> app/api/.env'
           'echo "GAUTH_CLIENT_SECRET=GAUTH_CLIENT_SECRET" >> app/api/.env'
       # Push docker image to dockerhub after building
       - name: docker-build-push
