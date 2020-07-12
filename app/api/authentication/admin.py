@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from rest_framework.authtoken.models import Token
 
 from authentication.forms import AppUserChangeForm, AppUserCreationForm
-from authentication.models import AppUser, ExpiringToken, PhoneNumber, Profile
+from authentication.models import AppUser, ExpiringToken, PhoneNumber, Profile, SocialMediaAccount, SustainableDevelopmentGoal
 
 
 class AppUserAdmin(UserAdmin):
@@ -14,12 +14,12 @@ class AppUserAdmin(UserAdmin):
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active', 'is_superuser')}
          ),
     )
     search_fields = ('email',)
@@ -36,13 +36,18 @@ class PhoneNumberInline(admin.StackedInline):
     extra = 1
     model = PhoneNumber
 
+class SocialMediaAccountInline(admin.StackedInline):
+    extra = 1
+    model = SocialMediaAccount
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
+    filter_horizontal = ('sdgs', )
     list_display = ('user', 'name', 'campus', 'batch', 'points')
     actions = ['add_points', 'reduce_points']
     inlines = [
-        PhoneNumberInline
+        PhoneNumberInline,
+        SocialMediaAccountInline
     ]
     list_editable = ('points', )
     change_list_template = 'admin/profile_change_list.html'
@@ -67,3 +72,4 @@ admin.site.unregister(Token)
 admin.site.register(ExpiringToken, TokenAdmin)
 admin.site.register(AppUser, AppUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(SustainableDevelopmentGoal)

@@ -95,6 +95,20 @@ class ExpiringToken(Token):
         verbose_name_plural = 'Expiring Tokens'
 
 
+class SustainableDevelopmentGoal(models.Model):
+    code = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+    def get(self, field, default=None):
+        values = {'code': self.code, 'name': self.name}
+        return values.get(field, default)
+
+    def __str__(self):
+        return f'{self.code} - {self.name}'
+
+    class Meta:
+        ordering = ['code']
+
 class ProfileManager(models.Manager):
 
     def create(self, email, name, is_junior_fellow, campus, batch, number, country_code='', points=0):
@@ -124,15 +138,29 @@ class Profile(models.Model):
     name = models.CharField(max_length=100)
     is_junior_fellow = models.BooleanField()
     campus = models.CharField(max_length=100)
+    city = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    work = models.CharField(max_length=200, blank=True)
     batch = models.PositiveIntegerField()
     points = models.PositiveIntegerField(blank=True)
     picture = models.ImageField(upload_to='profile-pics', blank=True)
+    sdgs = models.ManyToManyField(to=SustainableDevelopmentGoal, related_name='profiles')
 
     objects = ProfileManager()
 
     def deduct_points(self, points):
         self.points -= points
         self.save()
+
+    def update_sdgs(self, sdgs):
+        if sdgs is not None and len(sdgs) > 0:
+            existing_sdgs = list(self.sdgs.all())
+            for sdg in existing_sdgs:
+                self.sdgs.remove(sdg)
+
+            for sdg_code in sdgs:
+                sdg = SustainableDevelopmentGoal.objects.get(pk=sdg_code)
+                self.sdgs.add(sdg)
 
     def __str__(self):
         return f'{self.name} - {self.user}'
@@ -147,5 +175,27 @@ class PhoneNumber(models.Model):
     country_code = models.CharField(max_length=5, blank=True)
     number = models.CharField(max_length=30)
 
+    def get(self, field, default):
+        values = {'country_coude': self.country_code, 'number': self.number}
+        return values.get(field, default)
+
     def __str__(self):
         return f'{self.country_code} {self.number}'
+
+
+class SocialMediaAccount(models.Model):
+    user_profile = models.ForeignKey(
+        Profile,
+        on_delete=models.DO_NOTHING,
+        related_name='social_media_account'
+    )
+    account = models.CharField(max_length=200)
+    type = models.CharField(max_length=100)
+
+    def get(self, field, default=None):
+        values = {'type': self.type, 'account': self.account}
+        return values.get(field, default)
+
+    def __str__(self):
+        return f'{self.type} : {self.account}'
+
