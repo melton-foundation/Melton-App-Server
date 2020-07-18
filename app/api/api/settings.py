@@ -15,8 +15,6 @@ from datetime import timedelta
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-from django.urls import path
-
 
 sentry_sdk.init(
     dsn="https://071165505121462f9cca9519953192a2@o421262.ingest.sentry.io/5340770",
@@ -27,10 +25,7 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-def trigger_error(request):
-    division_by_zero = 1 / 0
 
-    
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -46,7 +41,7 @@ SECRET_KEY = '1@@79%eezq70b#wd68k+p+ds_7q_zf553zn#&&uo7rqrh^iuoa'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -60,8 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'authentication',
-    'store'
+    'authentication'
 ]
 
 MIDDLEWARE = [
