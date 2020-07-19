@@ -25,7 +25,6 @@ handler500 = 'api.views.error_500_view'
 
 
 urlpatterns = [
-    path('sentry-debug/', trigger_error),
     path('admin/', admin.site.urls),
     path('api/', views.index),
     path('api/', include('authentication.urls')),
