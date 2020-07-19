@@ -23,7 +23,6 @@ handler403 = 'api.views.error_403_view'
 handler404 = 'api.views.error_404_view'
 handler500 = 'api.views.error_500_view'
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', views.index),
