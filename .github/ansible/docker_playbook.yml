@@ -12,9 +12,6 @@
     dest_port: 8000
 
   tasks:
-    - name: Install aptitude using apt
-      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
-
     - name: Install required system packages
       apt: name={{ item }} state=latest update_cache=yes
       loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
@@ -45,9 +42,16 @@
       docker_container:
         name: "{{ default_container_name }}{{ item }}"
         image: "{{ default_container_image }}:{{ container_tag }}"
+        network_mode: host
         ports:
           - "{{ src_port }}:{{ dest_port }}"
         volumes:
           - /root/melton-app/staticfiles:/code/api/static/
         state: started
+        log_driver: loki
+        log_options:
+          loki-url: http://localhost:3100/api/prom/push
+          loki-retries: 5
+          loki-batch-size: 400
+          loki-external-labels: tag=melton
       with_sequence: count={{ create_containers }}

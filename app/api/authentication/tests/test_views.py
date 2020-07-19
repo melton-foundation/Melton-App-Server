@@ -3,7 +3,7 @@ from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from authentication.models import AppUser, Profile, ExpiringToken
+from authentication.models import AppUser, Profile, ExpiringToken, SustainableDevelopmentGoal
 
 
 class RegistrationAPITest(APITestCase):
@@ -17,22 +17,22 @@ class RegistrationAPITest(APITestCase):
     NUMBER = '99999999999'
     COUNTRY_CODE = '+91'
 
-    RESPONSE_TYPE_SUCCESS = "success"
-    RESPONSE_TYPE_FAILURE = "failure"
+    RESPONSE_TYPE_SUCCESS = 'success'
+    RESPONSE_TYPE_FAILURE = 'failure'
 
     def test_register_success(self):
         url = reverse('register')
         data = {
-            "user": {
-                "email": self.EMAIL
+            'user': {
+                'email': self.EMAIL
             },
-            "name": self.NAME,
-            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
-            "campus": self.CAMPUS,
-            "batch": self.BATCH,
-            "phoneNumber": {
-                "countryCode": self.COUNTRY_CODE,
-                "number": self.NUMBER
+            'name': self.NAME,
+            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
+            'campus': self.CAMPUS,
+            'batch': self.BATCH,
+            'phoneNumber': {
+                'countryCode': self.COUNTRY_CODE,
+                'number': self.NUMBER
             }
         }
         response = self.client.post(url, data, format='json')
@@ -55,16 +55,16 @@ class RegistrationAPITest(APITestCase):
     def _test_register_missing_required_field(self, field_name):
         url = reverse('register')
         data = {
-            "user": {
-                "email": self.EMAIL
+            'user': {
+                'email': self.EMAIL
             },
-            "name": self.NAME,
-            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
-            "campus": self.CAMPUS,
-            "batch": self.BATCH,
-            "phoneNumber": {
-                "countryCode": self.COUNTRY_CODE,
-                "number": self.NUMBER
+            'name': self.NAME,
+            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
+            'campus': self.CAMPUS,
+            'batch': self.BATCH,
+            'phoneNumber': {
+                'countryCode': self.COUNTRY_CODE,
+                'number': self.NUMBER
             }
         }
         data.pop(field_name)
@@ -95,16 +95,16 @@ class RegistrationAPITest(APITestCase):
     def test_register_same_email(self):
         url = reverse('register')
         data = {
-            "user": {
-                "email": self.EMAIL
+            'user': {
+                'email': self.EMAIL
             },
-            "name": self.NAME,
-            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
-            "campus": self.CAMPUS,
-            "batch": self.BATCH,
-            "phoneNumber": {
-                "countryCode": self.COUNTRY_CODE,
-                "number": self.NUMBER
+            'name': self.NAME,
+            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
+            'campus': self.CAMPUS,
+            'batch': self.BATCH,
+            'phoneNumber': {
+                'countryCode': self.COUNTRY_CODE,
+                'number': self.NUMBER
             }
         }
         # First registration attempt
@@ -135,8 +135,8 @@ class RegistrationStatusAPITest(APITestCase):
     NUMBER = '99999999999'
     COUNTRY_CODE = '+91'
 
-    RESPONSE_TYPE_SUCCESS = "success"
-    RESPONSE_TYPE_FAILURE = "failure"
+    RESPONSE_TYPE_SUCCESS = 'success'
+    RESPONSE_TYPE_FAILURE = 'failure'
 
     def _build_url(self, *args, **kwargs):
         get = kwargs.pop('get', {})
@@ -148,16 +148,16 @@ class RegistrationStatusAPITest(APITestCase):
     def _register_user(self):
         url = reverse('register')
         data = {
-            "user": {
-                "email": self.EMAIL
+            'user': {
+                'email': self.EMAIL
             },
-            "name": self.NAME,
-            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
-            "campus": self.CAMPUS,
-            "batch": self.BATCH,
-            "phoneNumber": {
-                "countryCode": self.COUNTRY_CODE,
-                "number": self.NUMBER
+            'name': self.NAME,
+            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
+            'campus': self.CAMPUS,
+            'batch': self.BATCH,
+            'phoneNumber': {
+                'countryCode': self.COUNTRY_CODE,
+                'number': self.NUMBER
             }
         }
         response = self.client.post(url, data, format='json')
@@ -212,12 +212,15 @@ class ProfileAPITest(APITestCase):
     IS_JUNIOR_FELLOW = True
     CAMPUS = 'University of the World'
     BATCH = 2020
+    CITY = 'Bengaluru'
+    COUNTRY = 'India'
+    WORK = 'Software Developer'
     NUMBER = '99999999999'
     COUNTRY_CODE = '+91'
     POINTS = 0
 
-    RESPONSE_TYPE_SUCCESS = "success"
-    RESPONSE_TYPE_FAILURE = "failure"
+    RESPONSE_TYPE_SUCCESS = 'success'
+    RESPONSE_TYPE_FAILURE = 'failure'
 
     def _build_url(self, *args, **kwargs):
         get = kwargs.pop('get', {})
@@ -233,26 +236,42 @@ class ProfileAPITest(APITestCase):
         self.user = self.profile.user
         self.token = ExpiringToken.objects.get(user=self.user)
 
+        sdgs = [(1, 'No Poverty'), (2, 'Zero hunger'), (3, 'Good health and Well-being'), (4, 'Quality Education')]
+        for sdg_code, sdg_name in sdgs:
+            SustainableDevelopmentGoal.objects.create(code = sdg_code, name=sdg_name)
+
         self.data = {
-            "user": {
-                "email": self.EMAIL
+            'user': {
+                'email': self.EMAIL
             },
-            "name": self.NAME,
-            "isJuniorFellow": self.IS_JUNIOR_FELLOW,
-            "campus": self.CAMPUS,
-            "batch": self.BATCH,
-            "points": self.POINTS,
-            "phoneNumber": [{
-                            "countryCode": self.COUNTRY_CODE,
-                            "number": self.NUMBER
-                            }]
+            'name': self.NAME,
+            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
+            'campus': self.CAMPUS,
+            'city': self.CITY,
+            'country': self.COUNTRY,
+            'work': self.WORK,
+            'batch': self.BATCH,
+            'points': self.POINTS,
+            'phoneNumber': [{
+                            'countryCode': self.COUNTRY_CODE,
+                            'number': self.NUMBER
+                            }],
+            'socialMediaAccounts': [{
+                'type': 'github',
+                'account': 'https://github.com/Suhas-G'
+            }],
+            'sdgs': [1, 2, 3]
         }
 
-    def _test_update_field(self, field, value):
+    def _test_update_profile(self, data):
         self.client.force_authenticate(user=self.user, token=self.token)
         url = self._build_url('profile')
+        response = self.client.post(url, data, format='json')
+        return response
+
+    def _test_update_field(self, field, value):
         self.data[field] = value
-        response = self.client.post(url, self.data, format="json")
+        response = self._test_update_profile(self.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('type', None),
                          self.RESPONSE_TYPE_SUCCESS)
@@ -279,28 +298,34 @@ class ProfileAPITest(APITestCase):
 
     def test_cant_update_points(self):
         points = 100
-        response = self._test_update_field("points", points)
-        self.assertNotEqual(response.data.get("profile").get("points"), points)
+        response = self._test_update_field('points', points)
+        self.assertNotEqual(response.data.get('profile').get('points'), points)
 
     def test_cant_update_is_junior_fellow(self):
         is_junior_fellow = False
-        response = self._test_update_field("isJuniorFellow", is_junior_fellow)
-        self.assertNotEqual(response.data.get("profile").get("isJuniorFellow"), is_junior_fellow)
+        response = self._test_update_field('isJuniorFellow', is_junior_fellow)
+        self.assertNotEqual(response.data.get('profile').get('isJuniorFellow'), is_junior_fellow)
 
     def test_update_name(self):
-        name = "suhas"
-        response = self._test_update_field("name", name)
-        self.assertEqual(response.data.get("profile").get("name"), name)
+        name = 'suhas'
+        response = self._test_update_field('name', name)
+        self.assertEqual(response.data.get('profile').get('name'), name)
 
     def test_update_campus(self):
-        campus = "BMS"
-        response = self._test_update_field("campus", campus)
-        self.assertEqual(response.data.get("profile").get("campus"), campus)
+        campus = 'BMS'
+        response = self._test_update_field('campus', campus)
+        self.assertEqual(response.data.get('profile').get('campus'), campus)
+
+    def test_update_city_country_work(self):
+        response = self._test_update_profile(self.data)
+        self.assertEqual(response.data.get('profile').get('city'), self.CITY)
+        self.assertEqual(response.data.get('profile').get('country'), self.COUNTRY)
+        self.assertEqual(response.data.get('profile').get('work'), self.WORK)
 
     def test_update_batch(self):
         batch = 2021
-        response = self._test_update_field("batch", batch)
-        self.assertEqual(response.data.get("profile").get("batch"), batch)
+        response = self._test_update_field('batch', batch)
+        self.assertEqual(response.data.get('profile').get('batch'), batch)
 
     def test_update_phone_numbers(self):
         phone_numbers = [
@@ -313,6 +338,112 @@ class ProfileAPITest(APITestCase):
                 'countryCode': '+92'
             }
         ]
-        response = self._test_update_field("phoneNumber", phone_numbers)
+        response = self._test_update_field('phoneNumber', phone_numbers)
         self.assertListEqual(response.data.get(
-            "profile").get("phoneNumber"), phone_numbers)
+            'profile').get('phoneNumber'), phone_numbers)
+
+    def test_update_social_media_accounts(self):
+        socialMediaAccounts= [{
+                'type': 'github',
+                'account': 'https://github.com/Suhas-G'
+            },
+            {
+                'type': 'linkedIn',
+                'account': 'https://linkedin.com/Suhas-G'
+            }]
+        response = self._test_update_field('socialMediaAccounts', socialMediaAccounts)
+        self.assertListEqual(response.data.get('profile').get('socialMediaAccounts'), socialMediaAccounts)
+
+
+    def test_update_sdgs(self):
+        response = self._test_update_profile(self.data)
+        self.assertListEqual(response.data.get('profile').get('sdgs'), self.data['sdgs'])
+
+        new_sdgs = [2,3,4]
+        response = self._test_update_field('sdgs', new_sdgs)
+        self.assertListEqual(response.data.get('profile').get('sdgs'), new_sdgs)
+
+    def test_cant_update_sdgs_with_more_than_three(self):
+        new_sdgs = [2, 3, 4, 5]
+        self.data['sdgs'] = new_sdgs
+        response = self._test_update_profile(self.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('type', None),
+                         self.RESPONSE_TYPE_FAILURE)
+
+    def test_cant_update_sdgs_with_non_int(self):
+        new_sdgs = [2.1, 3]
+        self.data['sdgs'] = new_sdgs
+        response = self._test_update_profile(self.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('type', None),
+                         self.RESPONSE_TYPE_FAILURE)
+
+    def test_cant_update_sdgs_with_non_existing_sdg(self):
+        new_sdgs = [2, 3, 10]
+        self.data['sdgs'] = new_sdgs
+        response = self._test_update_profile(self.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('type', None),
+                         self.RESPONSE_TYPE_FAILURE)
+
+
+
+class UsersAPITest(APITestCase):
+    EMAILS = ['suhas@email.com', 'test1@email.com', 'test2@email.com', 'user1@email.com', 'user2@email.com']
+    NAMES = ['suhas', 'test1', 'test2', 'user1', 'user2']
+    IS_JUNIOR_FELLOW = True
+    CAMPUS = 'University of the World'
+    BATCH = 2020
+    NUMBERS = ['99999999999', '99999999998', '99999999997', '99999999996', '99999999995'] 
+    COUNTRY_CODE = '+91'
+    POINTS = 0
+
+    RESPONSE_TYPE_SUCCESS = 'success'
+    RESPONSE_TYPE_FAILURE = 'failure'
+
+
+    def _build_url(self, *args, **kwargs):
+        get = kwargs.pop('get', {})
+        url = reverse(*args, **kwargs)
+        if get:
+            url += '?' + urlencode(get)
+        return url
+
+
+    def setUp(self):
+        for index, _ in enumerate(self.EMAILS):
+            profile = Profile.objects.create(email=self.EMAILS[index], name=self.NAMES[index],
+                                                is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
+                                                batch=self.BATCH, number=self.NUMBERS[index], 
+                                                country_code=self.COUNTRY_CODE)
+            user = profile.user
+            token = ExpiringToken.objects.get(user=user)
+
+        self.user = user
+        self.token = token
+
+    def test_list_users(self):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('users')
+        response = self.client.get(url)
+        for index, data in enumerate(response.data):
+            self.assertEqual(data['user']['email'], self.EMAILS[index])
+            self.assertEqual(data['name'], self.NAMES[index])
+
+
+    def test_search_user(self):
+        self.client.force_authenticate(user=self.user, token=self.token)
+        url = self._build_url('users', get = {'search': 'email'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), len(self.EMAILS))
+
+        url = self._build_url('users', get = {'search': 'suhas'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 1)
+
+        url = self._build_url('users', get = {'search': 'user'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 2)
+
+        

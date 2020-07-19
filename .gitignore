@@ -137,3 +137,7 @@ staticfiles/
 
 # pycharm
 .idea/*
+
+
+# Database data
+db/data/*

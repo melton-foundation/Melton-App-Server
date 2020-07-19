@@ -1,11 +1,17 @@
-from rest_framework.authentication import TokenAuthentication
-from authentication.models import ExpiringToken
-from rest_framework import exceptions
-from django.utils.translation import gettext_lazy as localize
 from abc import ABC
-from google.oauth2 import id_token
-from google.auth.transport import requests
+import mimetypes
+
+import requests as rq
 from django.conf import settings
+from django.utils.translation import gettext_lazy as localize
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from google.auth.transport import requests
+from google.oauth2 import id_token
+from rest_framework import exceptions
+from rest_framework.authentication import TokenAuthentication
+
+from authentication.models import ExpiringToken
 
 
 class ExpiringTokenAuthentication(TokenAuthentication):
@@ -45,13 +51,31 @@ class OauthSignIn(ABC):
         self.claimed_email = claimed_email
         self.token = token
         self.idinfo = None
-        # print("---------------------------------\n\n", token, "----------------------------------------------\n")
+        self.picture_url = None
 
     def check_claim(self, verified_email):
         return self.claimed_email == verified_email
 
     def login(self, token):
         raise NotImplementedError
+
+    def save_profile_picture_url(self, picture):
+        self.picture_url = picture
+
+    def get_profile_picture(self):
+        if self.picture_url is None:
+            return None, None
+        response = rq.get(self.picture_url)
+        data = None
+        if response.status_code == 200:
+            data = response.content
+            content_type = response.headers['content-type']
+            extension = mimetypes.guess_extension(content_type)
+            extension = str(extension) if extension is not None else ''
+        img_temp = NamedTemporaryFile()
+        img_temp.write(data)
+        img_temp.flush()
+        return extension, File(img_temp)
 
 
 class GoogleOauth(OauthSignIn):
@@ -66,6 +90,9 @@ class GoogleOauth(OauthSignIn):
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             raise ValueError('Wrong issuer.')
 
+        if 'picture' in idinfo:
+            self.save_profile_picture_url(idinfo['picture'])
+
         success = self.check_claim(idinfo['email'])
         return success
 
@@ -74,4 +101,3 @@ class WeChatOauth(OauthSignIn):
 
     def login(self):
         return False
-
