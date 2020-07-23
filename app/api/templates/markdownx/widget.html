@@ -1,0 +1,56 @@
+<style>
+    .markdownx.row {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-top: 10px;
+    }
+
+    .markdownx .col-md-6 {
+        width: 45%;
+        display: inline-block;
+    }
+
+    .markdownx .col-md-6>textarea,
+    .markdownx .col-md-6>.markdownx-preview {
+        width: 100% !important;
+        max-height: 80vh;
+    }
+
+    .markdownx .col-md-6>textarea {
+        height: 80%;
+        padding-bottom: 3em;
+    }
+
+    .markdownx .col-md-6>.markdownx-preview {
+        height: 100%;
+    }
+
+    .markdownx .markdownx-preview img {
+        max-width: 80%;
+        margin: 1em auto;
+        display: block;
+    }
+
+    .markdownx .markdownx-preview>*:last-child {
+        margin-bottom: 100px;
+    }
+
+    .markdownx .markdownx-preview ul li {
+        list-style: unset;
+    }
+
+    .markdownx .markdownx-preview th,
+    .markdownx .markdownx-preview table td {
+        border: 1px solid rgb(157, 157, 157);
+    }
+</style>
+<div class="markdownx row">
+    <div class="col-md-6">
+        {% include 'django/forms/widgets/textarea.html' %}
+    </div>
+    <div class="col-md-6">
+        <div class="markdownx-preview"></div>
+    </div>
+</div>

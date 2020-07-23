@@ -25,7 +25,9 @@ handler500 = 'api.views.error_500_view'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('markdownx/', include('markdownx.urls')),
     path('api/', views.index),
     path('api/', include('authentication.urls')),
-    path('api/', include('store.urls'))
+    path('api/', include('store.urls')),
+    path('api/', include('posts.urls'))
 ]

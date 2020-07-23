@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from datetime import timedelta
+from datetime import datetime
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -49,11 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms',
     'storages',
+    'markdownx',
     'rest_framework',
     'rest_framework.authtoken',
     'authentication',
-    'store'
+    'store',
+    'posts'
 ]
 
 MIDDLEWARE = [
@@ -142,6 +146,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -169,3 +174,14 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_DEFAULT_ACL = None
 
 DEFAULT_FILE_STORAGE = 'api.storage_backends.MediaStorage' 
+
+
+MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
+MARKDOWNX_IMAGE_MAX_SIZE = {
+    'size': (3840, 0),
+    'quality': 90
+}
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra'
+]
+MARKDOWNX_UPLOAD_MAX_SIZE = 5 * 1024 * 1024
