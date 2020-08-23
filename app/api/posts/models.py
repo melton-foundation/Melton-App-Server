@@ -39,6 +39,7 @@ class Tag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
+    preview = models.ImageField(upload_to='post-previews', blank=True, help_text='Preview image for the post')
     description = models.TextField(verbose_name='Short Description',
                                    blank=True, help_text='Add a short text describing the post')
     content = MarkdownxField(
@@ -62,3 +63,6 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['-updated']
