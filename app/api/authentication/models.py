@@ -142,7 +142,7 @@ class Profile(models.Model):
     country = models.CharField(max_length=100, blank=True)
     work = models.CharField(max_length=200, blank=True)
     batch = models.PositiveIntegerField()
-    points = models.PositiveIntegerField(blank=True)
+    points = models.PositiveIntegerField(null=True, blank=True)
     picture = models.ImageField(upload_to='profile-pics', blank=True)
     sdgs = models.ManyToManyField(to=SustainableDevelopmentGoal, related_name='profiles')
 

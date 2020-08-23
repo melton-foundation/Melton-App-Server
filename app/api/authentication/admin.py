@@ -68,6 +68,7 @@ class ProfileAdmin(admin.ModelAdmin):
         self.message_user(request, f'{points} Points were removed from all selected accounts.')
 
 admin.site.site_header = 'Melton Foundation Dashboard'
+admin.site.site_title = 'Melton Foundation Admin'
 admin.site.unregister(Token)
 admin.site.register(ExpiringToken, TokenAdmin)
 admin.site.register(AppUser, AppUserAdmin)

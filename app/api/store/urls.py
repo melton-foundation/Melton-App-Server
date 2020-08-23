@@ -9,5 +9,6 @@ router.register(r'store', StoreAPI)
 urlpatterns = router.urls
 
 urlpatterns += [
-    path('buy/', buy_store_item, name = 'buy_store_item')
+    path('buy/', buy_store_item, name = 'buy_store_item'),
+    path('buy', buy_store_item, name = 'buy_store_item')
 ]
