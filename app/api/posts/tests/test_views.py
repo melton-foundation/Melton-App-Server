@@ -19,7 +19,7 @@ class PostAPITest(APITestCase):
     def setUp(self):
         self.profile = Profile.objects.create(email=self.EMAIL, name=self.NAME,
                                               is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
-                                              batch=self.BATCH, number=self.NUMBER, country_code=self.COUNTRY_CODE)
+                                              batch=self.BATCH)
         self.user = self.profile.user
         self.token = ExpiringToken.objects.get(user=self.user)
 
@@ -67,7 +67,7 @@ class PostAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
         for post in response.data:
-            self.assertSetEqual(set(['id', 'title', 'description', 'tags', 'created', 'updated']),
+            self.assertSetEqual(set(['id', 'title', 'preview', 'description', 'tags', 'created', 'updated']),
                                 set(post.keys()))
 
     def test_retrieve_post(self):
@@ -75,7 +75,7 @@ class PostAPITest(APITestCase):
         url = self._build_url('post', args=[self.posts[0]['id']])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertSetEqual(set(['title', 'description', 'content', 'tags', 'created', 'updated']),
+        self.assertSetEqual(set(['title', 'preview', 'description', 'content', 'tags', 'created', 'updated']),
                             set(response.data.keys()))
 
     def test_cant_retrieve_inactive_post(self):

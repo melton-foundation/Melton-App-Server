@@ -27,13 +27,8 @@ class RegistrationAPITest(APITestCase):
                 'email': self.EMAIL
             },
             'name': self.NAME,
-            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
             'campus': self.CAMPUS,
             'batch': self.BATCH,
-            'phoneNumber': {
-                'countryCode': self.COUNTRY_CODE,
-                'number': self.NUMBER
-            }
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -47,10 +42,6 @@ class RegistrationAPITest(APITestCase):
         self.assertEqual(profile.is_junior_fellow, self.IS_JUNIOR_FELLOW)
         self.assertEqual(profile.campus, self.CAMPUS)
         self.assertEqual(profile.batch, self.BATCH)
-        phone_number = profile.phone_number.first()
-        self.assertIsNotNone(phone_number)
-        self.assertEqual(phone_number.number, self.NUMBER)
-        self.assertEqual(phone_number.country_code, self.COUNTRY_CODE)
 
     def _test_register_missing_required_field(self, field_name):
         url = reverse('register')
@@ -59,13 +50,8 @@ class RegistrationAPITest(APITestCase):
                 'email': self.EMAIL
             },
             'name': self.NAME,
-            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
             'campus': self.CAMPUS,
-            'batch': self.BATCH,
-            'phoneNumber': {
-                'countryCode': self.COUNTRY_CODE,
-                'number': self.NUMBER
-            }
+            'batch': self.BATCH
         }
         data.pop(field_name)
         response = self.client.post(url, data, format='json')
@@ -80,17 +66,12 @@ class RegistrationAPITest(APITestCase):
     def test_register_missing_name(self):
         self._test_register_missing_required_field('name')
 
-    def test_register_missing_jf(self):
-        self._test_register_missing_required_field('isJuniorFellow')
-
     def test_register_missing_campus(self):
         self._test_register_missing_required_field('campus')
 
     def test_register_missing_batch(self):
         self._test_register_missing_required_field('batch')
 
-    def test_register_missing_phone(self):
-        self._test_register_missing_required_field('phoneNumber')
 
     def test_register_same_email(self):
         url = reverse('register')
@@ -99,13 +80,8 @@ class RegistrationAPITest(APITestCase):
                 'email': self.EMAIL
             },
             'name': self.NAME,
-            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
             'campus': self.CAMPUS,
-            'batch': self.BATCH,
-            'phoneNumber': {
-                'countryCode': self.COUNTRY_CODE,
-                'number': self.NUMBER
-            }
+            'batch': self.BATCH
         }
         # First registration attempt
         response = self.client.post(url, data, format='json')
@@ -152,13 +128,8 @@ class RegistrationStatusAPITest(APITestCase):
                 'email': self.EMAIL
             },
             'name': self.NAME,
-            'isJuniorFellow': self.IS_JUNIOR_FELLOW,
             'campus': self.CAMPUS,
             'batch': self.BATCH,
-            'phoneNumber': {
-                'countryCode': self.COUNTRY_CODE,
-                'number': self.NUMBER
-            }
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -232,7 +203,7 @@ class ProfileAPITest(APITestCase):
     def setUp(self):
         self.profile = Profile.objects.create(email=self.EMAIL, name=self.NAME,
                                               is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
-                                              batch=self.BATCH, number=self.NUMBER, country_code=self.COUNTRY_CODE)
+                                              batch=self.BATCH)
         self.user = self.profile.user
         self.token = ExpiringToken.objects.get(user=self.user)
 
@@ -291,10 +262,6 @@ class ProfileAPITest(APITestCase):
         self.assertEqual(profile.get('campus'), self.CAMPUS)
         self.assertEqual(profile.get('batch'), self.BATCH)
         self.assertEqual(profile.get('points'), self.POINTS)
-        self.assertEqual(profile.get('phoneNumber')[
-                         0].get('number'), self.NUMBER)
-        self.assertEqual(profile.get('phoneNumber')[0].get(
-            'countryCode'), self.COUNTRY_CODE)
 
     def test_cant_update_points(self):
         points = 100
@@ -395,8 +362,6 @@ class UsersAPITest(APITestCase):
     IS_JUNIOR_FELLOW = True
     CAMPUS = 'University of the World'
     BATCH = 2020
-    NUMBERS = ['99999999999', '99999999998', '99999999997', '99999999996', '99999999995'] 
-    COUNTRY_CODE = '+91'
     POINTS = 0
 
     RESPONSE_TYPE_SUCCESS = 'success'
@@ -415,8 +380,7 @@ class UsersAPITest(APITestCase):
         for index, _ in enumerate(self.EMAILS):
             profile = Profile.objects.create(email=self.EMAILS[index], name=self.NAMES[index],
                                                 is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
-                                                batch=self.BATCH, number=self.NUMBERS[index], 
-                                                country_code=self.COUNTRY_CODE)
+                                                batch=self.BATCH)
             user = profile.user
             token = ExpiringToken.objects.get(user=user)
 

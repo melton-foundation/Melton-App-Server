@@ -111,17 +111,13 @@ class SustainableDevelopmentGoal(models.Model):
 
 class ProfileManager(models.Manager):
 
-    def create(self, email, name, is_junior_fellow, campus, batch, number, country_code='', points=0):
+    def create(self, email, name, is_junior_fellow, campus, batch, points=0):
         user = AppUser(email=email, is_active=False)
         user.save()
 
         profile = Profile(user=user, name=name, is_junior_fellow=is_junior_fellow,
                           campus=campus, batch=batch, points=points)
         profile.save()
-
-        phone_number = PhoneNumber(
-            user_profile=profile, country_code=country_code, number=number)
-        phone_number.save()
 
         token = ExpiringToken(user = user)
         token.save()
@@ -175,8 +171,8 @@ class PhoneNumber(models.Model):
     country_code = models.CharField(max_length=5, blank=True)
     number = models.CharField(max_length=30)
 
-    def get(self, field, default):
-        values = {'country_coude': self.country_code, 'number': self.number}
+    def get(self, field, default=None):
+        values = {'country_code': self.country_code, 'number': self.number}
         return values.get(field, default)
 
     def __str__(self):

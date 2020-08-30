@@ -43,9 +43,9 @@ class SustainableDevelopmentGoalSerializer(serializers.RelatedField):
 
 class _ProfileSerializer(serializers.ModelSerializer):
     user = AppUserSerializer()
-    isJuniorFellow = serializers.BooleanField(source='is_junior_fellow')
+    isJuniorFellow = serializers.BooleanField(source='is_junior_fellow', read_only=True)
     points = serializers.IntegerField(read_only=True)
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
     picture = serializers.ImageField(read_only=True)
     socialMediaAccounts = SocialMediaAccountSerializer(source='social_media_account', many=True, required=False)
     sdgs = SustainableDevelopmentGoalSerializer(required=False, many=True)
@@ -64,7 +64,7 @@ class _ProfileSerializer(serializers.ModelSerializer):
 
 class ProfileListSerializer(_ProfileSerializer):
     id = serializers.IntegerField(source='user.id')
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
 
     class Meta:
         model = Profile
@@ -73,28 +73,25 @@ class ProfileListSerializer(_ProfileSerializer):
         depth = 1
 
 class ProfileCreateSerializer(_ProfileSerializer):
-    phoneNumber = PhoneNumberSerializer(source='phone_number')
 
     def create(self, validated_data):
         profile = Profile.objects.create(
             email=validated_data['user']['email'],
             name=validated_data['name'],
-            is_junior_fellow=validated_data['is_junior_fellow'],
+            is_junior_fellow=True,
             campus=validated_data['campus'],
-            batch=validated_data['batch'],
-            number=validated_data['phone_number']['number'],
-            country_code=validated_data['phone_number']['country_code']
+            batch=validated_data['batch']
         )
         return profile
 
     class Meta:
         model = Profile
         fields = ['user', 'name', 'isJuniorFellow',
-                  'campus', 'batch', 'phoneNumber']
+                  'campus', 'batch']
 
 
 class ProfileReadUpdateSerializer(_ProfileSerializer):
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True)
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
     user = AppUserSerializer(read_only=True)
     points = serializers.IntegerField(read_only=True)
 
