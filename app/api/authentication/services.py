@@ -1,14 +1,14 @@
-from rest_framework import status
+from django.conf import settings
+from django.core.files import File
+from rest_framework import exceptions, status
 
+from authentication.authentication import GoogleOauth, WeChatOauth
 from authentication.models import AppUser, ExpiringToken, Profile
 from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
                                         ProfileReadUpdateSerializer,
                                         RegistrationStatusSerializer)
-from django.conf import settings
-from django.core.files import File
-from authentication.authentication import GoogleOauth, WeChatOauth
-from rest_framework import exceptions
+from response.errors.authentication import ProfileDoesNotExist
 
 
 def register_user(data):
@@ -59,6 +59,14 @@ def get_token(email=None, user=None):
 
     return token
 
+def check_profile_exists(email=None, user=None):
+    profile_exists = False
+    if user is not None:
+        profile_exists = Profile.objects.exists(user = user)
+    elif email is not None:
+        profile_exists = Profile.objects.filter(user__email = email).exists()
+    return profile_exists
+
 
 def login(data):
     data = _normalise_login_data(data)
@@ -72,6 +80,9 @@ def login(data):
             response, response_status = check_registration({"email": email})
             if not (response_status == status.HTTP_200_OK and response['isApproved']):
                 return response, response_status
+
+            if not check_profile_exists(email=email):
+                return ProfileDoesNotExist(email=email).to_dict(), status.HTTP_403_FORBIDDEN
 
             auth = _get_auth_client(email, token, auth_provider)
             success = auth.login()
