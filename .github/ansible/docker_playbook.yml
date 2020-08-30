@@ -46,7 +46,7 @@
         ports:
           - "{{ src_port }}:{{ dest_port }}"
         volumes:
-          - /usr/local/share/staticfiles:/code/api/static/
+          - /usr/local/share/staticfiles/static:/code/api/static/
         state: started
         log_driver: loki
         log_options:
