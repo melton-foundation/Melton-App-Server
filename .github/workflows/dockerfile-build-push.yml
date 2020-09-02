@@ -58,6 +58,22 @@ jobs:
         env:
           GAUTH_CLIENT_SECRET: ${{ secrets.GAUTH_CLIENT_SECRET }}
         run: echo "GAUTH_CLIENT_SECRET=$GAUTH_CLIENT_SECRET" >> app/api/.env
+      - shell: bash
+        env:
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        run: echo "EMAIL_HOST=$EMAIL_HOST" >> app/api/.env
+      - shell: bash
+        env:
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+        run: echo "EMAIL_PORT=$EMAIL_PORT" >> app/api/.env
+      - shell: bash
+        env:
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        run: echo "EMAIL_HOST_USER=$EMAIL_HOST_USER" >> app/api/.env
+      - shell: bash
+        env:
+          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        run: echo "EMAIL_HOST_PASSWORD=$EMAIL_HOST_PASSWORD" >> app/api/.env
       # Push docker image to dockerhub after building
       - name: docker-build-push
         uses: docker/build-push-action@v1

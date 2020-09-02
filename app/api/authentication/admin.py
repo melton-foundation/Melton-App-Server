@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from rest_framework.authtoken.models import Token
 
 from authentication.forms import AppUserChangeForm, AppUserCreationForm
-from authentication.models import AppUser, ExpiringToken, PhoneNumber, Profile, SocialMediaAccount, SustainableDevelopmentGoal
+from authentication.models import (AppUser, ExpiringToken, PhoneNumber,
+                                   Profile, SocialMediaAccount,
+                                   SustainableDevelopmentGoal)
 
 
 class AppUserAdmin(UserAdmin):
@@ -36,9 +39,11 @@ class PhoneNumberInline(admin.StackedInline):
     extra = 1
     model = PhoneNumber
 
+
 class SocialMediaAccountInline(admin.StackedInline):
     extra = 1
     model = SocialMediaAccount
+
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
@@ -58,17 +63,20 @@ class ProfileAdmin(admin.ModelAdmin):
         for user in queryset:
             user.points += int(points)
             user.save()
-        self.message_user(request, f'{points} Points were added successfully to all selected accounts.')
+        self.message_user(
+            request, f'{points} Points were added successfully to all selected accounts.')
 
     def reduce_points(self, request, queryset):
         points = request.POST.get('points', 0)
         for user in queryset:
             user.points -= int(points)
             user.save()
-        self.message_user(request, f'{points} Points were removed from all selected accounts.')
+        self.message_user(
+            request, f'{points} Points were removed from all selected accounts.')
 
-admin.site.site_header = 'Melton Foundation Dashboard'
-admin.site.site_title = 'Melton Foundation Admin'
+
+admin.site.site_header = settings.SITE_HEADER
+admin.site.site_title = settings.SITE_TITLE
 admin.site.unregister(Token)
 admin.site.register(ExpiringToken, TokenAdmin)
 admin.site.register(AppUser, AppUserAdmin)

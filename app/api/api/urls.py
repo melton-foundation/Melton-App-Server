@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 from api import views
 
@@ -24,6 +25,10 @@ handler404 = 'api.views.error_404_view'
 handler500 = 'api.views.error_500_view'
 
 urlpatterns = [
+    path('admin/password_reset/', views.AdminPasswordResetView.as_view(), name='admin_password_reset'),
+    path('admin/password_reset/done/', views.AdminPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.AdminPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', views.AdminPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('admin/', admin.site.urls),
     path('markdownx/', include('markdownx.urls')),
     path('api/', views.index),
