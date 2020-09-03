@@ -1,3 +1,9 @@
+from django.conf import settings
+from django.contrib import admin
+from django.contrib.auth.views import (PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetDoneView,
+                                       PasswordResetView)
 from django.http import JsonResponse
 from sentry_sdk import capture_message
 
@@ -45,3 +51,28 @@ def index(request):
         'Description': 'An API for Melton Foundation Fellows App'
     }
     return JsonResponse(json)
+
+
+class AdminViewContext(object):
+    def get_context_data(self, **kw):
+        # super will automatically call the right Form class for each view
+        context = super().get_context_data(**kw)
+        context['site_header'] = settings.SITE_HEADER
+        context['site_title'] = settings.SITE_TITLE
+        return context
+
+
+class AdminPasswordResetView(AdminViewContext, PasswordResetView):
+    pass
+
+
+class AdminPasswordResetDoneView(AdminViewContext, PasswordResetDoneView):
+    pass
+
+
+class AdminPasswordResetCompleteView(AdminViewContext, PasswordResetCompleteView):
+    pass
+
+
+class AdminPasswordResetConfirmView(AdminViewContext, PasswordResetConfirmView):
+    pass
