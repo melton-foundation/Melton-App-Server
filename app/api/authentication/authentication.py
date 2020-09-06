@@ -81,10 +81,10 @@ class OauthSignIn(ABC):
 class GoogleOauth(OauthSignIn):
 
     def login(self):
-        idinfo = id_token.verify_oauth2_token(
-            self.token, requests.Request(), settings.GAUTH_CLIENT_ID)
+        idinfo = id_token.verify_oauth2_token(self.token, requests.Request())
 
-        if not isinstance(idinfo, dict) or 'email' not in idinfo:
+        if (not isinstance(idinfo, dict) or idinfo['aud'] not in [settings.GAUTH_ANDROID_CLIENT_ID, settings.GAUTH_IOS_CLIENT_ID] 
+            or 'email' not in idinfo):
             raise exceptions.AuthenticationFailed('Invalid token')
 
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
