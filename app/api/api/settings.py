@@ -14,14 +14,7 @@ import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-sentry_sdk.init(
-    dsn="https://071165505121462f9cca9519953192a2@o421262.ingest.sentry.io/5340770",
-    integrations=[DjangoIntegration()],
 
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
-)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,13 +26,20 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1@@79%eezq70b#wd68k+p+ds_7q_zf553zn#&&uo7rqrh^iuoa'
+SECRET_KEY = env.str('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 
+sentry_sdk.init(
+    dsn = env.str('SENTRY_DSN'),
+    integrations = [DjangoIntegration()],
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii = True
+)
 
 # Application definition
 
@@ -163,8 +163,8 @@ TOKEN_SETTINGS = {
 
 
 # Secrets
-GAUTH_CLIENT_ID = env.str('GAUTH_CLIENT_ID')
-GAUTH_SECRET_ID = env.str('GAUTH_CLIENT_SECRET')
+GAUTH_ANDROID_CLIENT_ID = env.str('GAUTH_ANDROID_CLIENT_ID')
+GAUTH_IOS_CLIENT_ID = env.str('GAUTH_IOS_CLIENT_ID')
 
 
 AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
