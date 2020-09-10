@@ -8,7 +8,7 @@ from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
                                         ProfileReadUpdateSerializer,
                                         RegistrationStatusSerializer)
-from response.errors.authentication import ProfileDoesNotExist
+from response.errors.authentication import ProfileDoesNotExist, UserNotRegistered, AccountNotApproved
 
 
 def register_user(data):
@@ -16,10 +16,9 @@ def register_user(data):
 
     if serializer.is_valid():
         profile = serializer.save()
-        token = get_token(user=profile.user)
         response_status = status.HTTP_201_CREATED
-        response = {"type": "success", "appToken": token.key if not token is None else None,
-                    "message": "User created successfully"}
+        response = {"type": "success",
+                    "message": f"User {profile.user.email} created successfully"}
     else:
         response, response_status = _form_bad_request_response(
             serializer.errors)
@@ -78,27 +77,17 @@ def login(data):
             token = serializer.validated_data["token"]
             auth_provider = serializer.validated_data["authProvider"]
             response, response_status = check_registration({"email": email})
-            if not (response_status == status.HTTP_200_OK and response['isApproved']):
-                return response, response_status
+
+            if (response_status == status.HTTP_204_NO_CONTENT):
+                return UserNotRegistered(email=email).to_dict(), status.HTTP_403_FORBIDDEN
+
+            if not response.get('isApproved', False):
+                return AccountNotApproved(email=email).to_dict(), status.HTTP_403_FORBIDDEN
 
             if not check_profile_exists(email=email):
                 return ProfileDoesNotExist(email=email).to_dict(), status.HTTP_403_FORBIDDEN
 
-            auth = _get_auth_client(email, token, auth_provider)
-            success = auth.login()
-
-            if success:
-                extension, picture_file = auth.get_profile_picture()
-                if picture_file is not None:
-                    save_profile_picture(picture_file, extension, email=email)
-                response_status = status.HTTP_200_OK
-                response = {"type": "success",
-                            "appToken": get_token(email=email).key,
-                            "message": "You are logged in."}
-            else:
-                response_status = status.HTTP_401_UNAUTHORIZED
-                response = {"type": "failure",
-                            "message": "Your email and token do not match."}
+            response, response_status = _login_valid_user(email, token, auth_provider)
         else:
             response, response_status = _form_bad_request_response(
                 serializer.errors)
@@ -114,6 +103,25 @@ def login(data):
                     "message": "Login failed.", "details": str(error)}
         return response, response_status
 
+
+def _login_valid_user(email, token, auth_provider):
+    auth = _get_auth_client(email, token, auth_provider)
+    success = auth.login()
+
+    if success:
+        extension, picture_file = auth.get_profile_picture()
+        if picture_file is not None:
+            save_profile_picture(picture_file, extension, email=email)
+        response_status = status.HTTP_200_OK
+        response = {"type": "success",
+                    "appToken": get_token(email=email).key,
+                    "message": "You are logged in."}
+    else:
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response = {"type": "failure",
+                    "message": "Your email and token do not match."}
+
+    return response, response_status
 
 def _get_auth_client(email, token, auth_provider):
     if auth_provider == "GOOGLE":
