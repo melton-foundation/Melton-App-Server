@@ -4,7 +4,7 @@ class FunctionalError(object):
     def __init__(self, message = "Some error has occured.", error_code = None):
         self.type = "failure"
         self.message = message
-        self.error_code = error_code
+        self.errorCode = error_code
 
     def to_dict(self):
         return self.__dict__
