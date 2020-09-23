@@ -185,6 +185,7 @@ class ProfileAPITest(APITestCase):
     BATCH = 2020
     CITY = 'Bengaluru'
     COUNTRY = 'India'
+    BIO = 'I like painting noodles and cooking paint'
     WORK = 'Software Developer'
     NUMBER = '99999999999'
     COUNTRY_CODE = '+91'
@@ -220,6 +221,7 @@ class ProfileAPITest(APITestCase):
             'campus': self.CAMPUS,
             'city': self.CITY,
             'country': self.COUNTRY,
+            'bio': self.BIO,
             'work': self.WORK,
             'batch': self.BATCH,
             'points': self.POINTS,
@@ -277,6 +279,11 @@ class ProfileAPITest(APITestCase):
         name = 'suhas'
         response = self._test_update_field('name', name)
         self.assertEqual(response.data.get('profile').get('name'), name)
+
+    def test_update_bio(self):
+        bio = 'i exist'
+        response = self._test_update_field('bio', bio)
+        self.assertEqual(response.data.get('profile').get('bio'), bio)
 
     def test_update_campus(self):
         campus = 'BMS'

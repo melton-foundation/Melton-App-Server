@@ -58,7 +58,7 @@ class _ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['user', 'name', 'isJuniorFellow',
-                  'campus','city','country', 'batch', 'work', 'points', 'phoneNumber','socialMediaAccounts', 'sdgs', 'picture']
+                  'campus', 'city', 'country', 'batch', 'bio', 'work', 'points', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
         depth = 1
 
 
@@ -69,7 +69,7 @@ class ProfileListSerializer(_ProfileSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'name', 'isJuniorFellow',
-                  'campus', 'city','country', 'batch', 'work', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
+                  'campus', 'city', 'country', 'batch', 'bio', 'work', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
         depth = 1
 
 class ProfileCreateSerializer(_ProfileSerializer):
@@ -100,6 +100,7 @@ class ProfileReadUpdateSerializer(_ProfileSerializer):
         instance.campus = validated_data.get('campus', instance.campus)
         instance.city = validated_data.get('city', instance.city)
         instance.country = validated_data.get('country', instance.country)
+        instance.bio = validated_data.get('bio', instance.bio)
         instance.work = validated_data.get('work', instance.work)
         instance.batch = validated_data.get('batch', instance.batch)
         # Delete existing phone numbers and add new ones
