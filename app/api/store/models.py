@@ -10,6 +10,7 @@ class TransactionType(models.TextChoices):
 
 class StoreItem(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    preview_image = models.ImageField(upload_to='store-items', blank=True)
     description = models.TextField(max_length=500)
     points = models.PositiveIntegerField(blank=False)
     active = models.BooleanField(default=True)

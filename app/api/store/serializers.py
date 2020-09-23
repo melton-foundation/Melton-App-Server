@@ -16,7 +16,7 @@ class StoreItemReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StoreItem
-        fields = ('id', 'name', 'description', 'points', 'active', 'purchased')
+        fields = ('id', 'name', 'preview_image', 'description', 'points', 'active', 'purchased')
 
 
 class TransactionSerializer(serializers.ModelSerializer):
