@@ -136,6 +136,7 @@ class Profile(models.Model):
     campus = models.CharField(max_length=100)
     city = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
+    bio = models.CharField(max_length=200, blank=True)
     work = models.CharField(max_length=200, blank=True)
     batch = models.PositiveIntegerField()
     points = models.PositiveIntegerField(null=True, blank=True)
