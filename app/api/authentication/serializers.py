@@ -78,7 +78,7 @@ class ProfileCreateSerializer(_ProfileSerializer):
         profile = Profile.objects.create(
             email=validated_data['user']['email'],
             name=validated_data['name'],
-            is_junior_fellow=True,
+            is_junior_fellow=False,
             campus=validated_data['campus'],
             batch=validated_data['batch']
         )

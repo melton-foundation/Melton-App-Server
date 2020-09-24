@@ -14,9 +14,11 @@ class StoreItemReadSerializer(serializers.ModelSerializer):
             
         return is_purchased
 
+    previewImage = serializers.ImageField(source='preview_image', read_only=True)
+
     class Meta:
         model = StoreItem
-        fields = ('id', 'name', 'preview_image', 'description', 'points', 'active', 'purchased')
+        fields = ('id', 'name', 'previewImage', 'description', 'points', 'active', 'purchased')
 
 
 class TransactionSerializer(serializers.ModelSerializer):

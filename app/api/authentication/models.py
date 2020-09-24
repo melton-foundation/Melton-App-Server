@@ -132,7 +132,7 @@ class Profile(models.Model):
         primary_key=True
     )
     name = models.CharField(max_length=100)
-    is_junior_fellow = models.BooleanField(default=False)
+    is_junior_fellow = models.BooleanField()
     campus = models.CharField(max_length=100)
     city = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
