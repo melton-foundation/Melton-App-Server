@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from authentication.models import AppUser
+from django.core.exceptions import ValidationError
 
 
 class TransactionType(models.TextChoices):
@@ -35,7 +36,7 @@ class Transaction(models.Model):
 
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     transaction_date = models.DateTimeField(auto_now_add=True)
-    item = models.ForeignKey(StoreItem, on_delete=models.DO_NOTHING)
+    item = models.ForeignKey(StoreItem, on_delete=models.SET_NULL, null=True)
     # although this data is already part of item model, 
     # adding it here so that we have some reference to points even though item is deleted for some reason
     points = models.PositiveIntegerField()
@@ -43,6 +44,17 @@ class Transaction(models.Model):
         max_length=10, choices=TransactionType.choices)
 
     objects = TransactionManager()
+
+    def clean(self):
+        user_points = 0
+        if not self.user.profile.points is None:
+            user_points = self.user.profile.points
+
+        if self.item.points > user_points:
+            raise ValidationError('The user does not have enough points.')
+        if (Transaction.objects.is_purchased(self.user, self.item)):
+            raise ValidationError('The user has already purchased this item.')
+        return super().clean()
 
     def __str__(self):
         if (self.transaction_type == TransactionType.BUY):
