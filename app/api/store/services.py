@@ -9,10 +9,14 @@ def buy_item(data, user):
     serializer = BuyTransactionSerializer(data = data)
     if serializer.is_valid():
         item = get_item(item_id = serializer.data.get("itemId", None), item_name=serializer.data.get("itemName", None))
+        user_points = 0
+        if not user.profile.points is None:
+            user_points = user.profile.points
+
         if item is None:
             response = ItemNotAvailable().to_dict()
             response_status = status.HTTP_204_NO_CONTENT
-        elif item.points > user.profile.points:
+        elif item.points > user_points:
             response = InsufficientPoints(user, item).to_dict()
             response_status = status.HTTP_200_OK
         elif item_purchased(user, item):
