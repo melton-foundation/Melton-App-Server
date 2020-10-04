@@ -11,7 +11,7 @@ class RegistrationAPITest(APITestCase):
     EMAIL = 'test@email.com'
     NAME = 'test'
     ALTERNATE_NAME = 'test again'
-    IS_JUNIOR_FELLOW = True
+    IS_JUNIOR_FELLOW = False
     CAMPUS = 'University of the World'
     BATCH = 2020
     NUMBER = '99999999999'
