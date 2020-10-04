@@ -69,7 +69,7 @@ class ProfileListSerializer(_ProfileSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'name', 'isJuniorFellow',
-                  'campus', 'city', 'country', 'batch', 'bio', 'work', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
+                  'campus', 'city', 'country', 'batch', 'picture']
         depth = 1
 
 class ProfileCreateSerializer(_ProfileSerializer):
