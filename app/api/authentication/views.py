@@ -6,7 +6,7 @@ from rest_framework import filters
 
 from authentication import services, authentication
 from authentication.models import Profile
-from authentication.serializers import ProfileListSerializer
+from authentication.serializers import ProfileListSerializer, ProfileRetrieveSerializer
 
 @api_view(['POST'])
 def register(request):
@@ -42,6 +42,10 @@ class UsersView(ReadOnlyModelViewSet):
     authentication_classes = [authentication.ExpiringTokenAuthentication]
     search_fields = ['name', 'user__email']
     filter_backends = (filters.SearchFilter,)
-    queryset = Profile.objects.all()
-    serializer_class = ProfileListSerializer
+    queryset = Profile.objects.filter(user__is_active = True)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProfileListSerializer
+        return ProfileRetrieveSerializer
     

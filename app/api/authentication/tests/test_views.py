@@ -389,6 +389,8 @@ class UsersAPITest(APITestCase):
                                                 is_junior_fellow=self.IS_JUNIOR_FELLOW, campus=self.CAMPUS,
                                                 batch=self.BATCH)
             user = profile.user
+            user.is_active = True
+            user.save()
             token = ExpiringToken.objects.get(user=user)
 
         self.user = user
@@ -398,6 +400,7 @@ class UsersAPITest(APITestCase):
         self.client.force_authenticate(user=self.user, token=self.token)
         url = self._build_url('users')
         response = self.client.get(url)
+        self.assertEqual(len(response.data), len(self.EMAILS))
         for index, data in enumerate(response.data):
             self.assertEqual(data['user']['email'], self.EMAILS[index])
             self.assertEqual(data['name'], self.NAMES[index])
@@ -407,6 +410,7 @@ class UsersAPITest(APITestCase):
         self.client.force_authenticate(user=self.user, token=self.token)
         url = self._build_url('users', get = {'search': 'email'})
         response = self.client.get(url)
+
         self.assertEqual(len(response.data), len(self.EMAILS))
 
         url = self._build_url('users', get = {'search': 'suhas'})
