@@ -72,6 +72,16 @@ class ProfileListSerializer(_ProfileSerializer):
                   'campus', 'city', 'country', 'batch', 'sdgs', 'picture']
         depth = 1
 
+class ProfileRetrieveSerializer(_ProfileSerializer):
+    id = serializers.IntegerField(source='user.id')
+    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'name', 'isJuniorFellow', 'campus', 'city', 'country', 
+                    'batch',  'bio', 'work', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
+        depth = 1
+
 class ProfileCreateSerializer(_ProfileSerializer):
 
     def create(self, validated_data):
