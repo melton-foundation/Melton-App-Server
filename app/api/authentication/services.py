@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.files import File
 from rest_framework import exceptions, status
 
-from authentication.authentication import GoogleOauth, WeChatOauth
+from authentication.authentication import GoogleOauth, WeChatOauth, AppleOauth
 from authentication.models import AppUser, ExpiringToken, Profile
 from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
@@ -126,6 +126,8 @@ def _login_valid_user(email, token, auth_provider):
 def _get_auth_client(email, token, auth_provider):
     if auth_provider == "GOOGLE":
         return GoogleOauth(email, token)
+    elif auth_provider == "APPLE":
+        return AppleOauth(email, token)
     else:
         return WeChatOauth(email, token)
 

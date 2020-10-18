@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from authentication.models import AppUser, PhoneNumber, Profile, ExpiringToken, SocialMediaAccount, SustainableDevelopmentGoal
 
-AUTH_PROVIDERS = ['GOOGLE', 'WECHAT', 'MF']
+AUTH_PROVIDERS = ['GOOGLE', 'APPLE']
 
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
