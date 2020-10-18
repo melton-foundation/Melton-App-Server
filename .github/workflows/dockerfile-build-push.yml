@@ -86,6 +86,22 @@ jobs:
         env:
           EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         run: echo "EMAIL_HOST_PASSWORD=$EMAIL_HOST_PASSWORD" >> app/api/.env
+      - shell:
+        env:
+          APPLE_OAUTH_CLIENT_ID: ${{ secrets.APPLE_OAUTH_CLIENT_ID }}
+        run: echo "APPLE_OAUTH_CLIENT_ID=$APPLE_OAUTH_CLIENT_ID" >> app/api/.env
+      - shell:
+        env:
+          APPLE_OAUTH_KEY_ID: ${{ APPLE_OAUTH_KEY_ID }}
+        run: echo "APPLE_OAUTH_KEY_ID=$APPLE_OAUTH_KEY_ID" >> app/api/.env
+      - shell:
+        env:
+          APPLE_OAUTH_TEAM_ID: ${{ APPLE_OAUTH_TEAM_ID }}
+        run: echo "APPLE_OAUTH_TEAM_ID=$APPLE_OAUTH_TEAM_ID" >> app/api/.env
+      - shell:
+        env:
+          APPLE_OATH_PRIVATE_KEY: ${{ APPLE_OATH_PRIVATE_KEY }}
+        run: echo "APPLE_OATH_PRIVATE_KEY=$APPLE_OATH_PRIVATE_KEY" >> app/api/.env
       # Push docker image to dockerhub after building
       - name: docker-build-push
         uses: docker/build-push-action@v1
