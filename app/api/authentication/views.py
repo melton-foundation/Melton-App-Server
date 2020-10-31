@@ -29,7 +29,7 @@ class ProfileView(APIView):
     authentication_classes = [authentication.ExpiringTokenAuthentication]
 
     def get(self, request):
-        response, status = services.get_profile(user = request.user)
+        response, status = services.read_profile(user = request.user)
         return Response(response, status=status)
 
     def post(self, request):

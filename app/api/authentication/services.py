@@ -1,14 +1,18 @@
+import uuid
+
 from django.conf import settings
 from django.core.files import File
+from response.errors.authentication import (AccountNotApproved,
+                                            ProfileDoesNotExist,
+                                            UserNotRegistered)
 from rest_framework import exceptions, status
 
-from authentication.authentication import GoogleOauth, WeChatOauth, AppleOauth
+from authentication.authentication import AppleOauth, GoogleOauth, WeChatOauth
 from authentication.models import AppUser, ExpiringToken, Profile
 from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
                                         ProfileReadUpdateSerializer,
                                         RegistrationStatusSerializer)
-from response.errors.authentication import ProfileDoesNotExist, UserNotRegistered, AccountNotApproved
 
 
 def register_user(data):
@@ -132,22 +136,32 @@ def _get_auth_client(email, token, auth_provider):
         return WeChatOauth(email, token)
 
 
-def get_profile(user=None, email=None):
-    serializer = ProfileReadUpdateSerializer()
-    if user is not None:
-        profile = Profile.objects.prefetch_related(
-            "phone_number").get(user=user)
-        serializer = ProfileReadUpdateSerializer(profile)
-    elif email is not None:
-        user = AppUser.objects.get(email=email)
-        profile = Profile.objects.prefetch_related(
-            "phone_number").get(user=user)
-        serializer = ProfileReadUpdateSerializer(profile)
-
+def read_profile(user=None, email=None):
+    profile = None
+    try:
+        profile = get_profile(user=user, email=email)
+    except (AppUser.DoesNotExist, Profile.DoesNotExist):
+        return ProfileDoesNotExist(email=email), status.HTTP_404_NOT_FOUND
+    
+    serializer = ProfileReadUpdateSerializer(profile)
     response = {"type": "success", "profile": serializer.data}
     response_status = status.HTTP_200_OK
 
     return response, response_status
+
+def get_profile(user=None, email=None):
+    profile = None
+    if user is not None:
+        profile = Profile.objects.prefetch_related(
+            "phone_number").get(user=user)
+    elif email is not None:
+        user = AppUser.objects.get(email=email)
+        profile = Profile.objects.prefetch_related(
+            "phone_number").get(user=user)
+
+    return profile
+
+
 
 def update_profile(user, data):
     profile = Profile.objects.prefetch_related(
@@ -171,7 +185,7 @@ def save_profile_picture(picture_file, extension, user=None, email=None):
         user = AppUser.objects.get(email=email)
         profile = Profile.objects.get(user=user)
 
-    filename = email.split('@')[0] + extension
+    filename = email.split('@')[0] + "_" + str(uuid.uuid4().hex)[:6] + extension
     profile.picture.save(filename, picture_file)
     profile.save()
 
