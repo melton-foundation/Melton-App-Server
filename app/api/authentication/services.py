@@ -2,6 +2,8 @@ import uuid
 
 from django.conf import settings
 from django.core.files import File
+from django.core.mail import mail_managers
+from django.template.loader import render_to_string
 from response.errors.authentication import (AccountNotApproved,
                                             ProfileDoesNotExist,
                                             UserNotRegistered)
@@ -15,19 +17,37 @@ from authentication.serializers import (LoginSerializer,
                                         RegistrationStatusSerializer)
 
 
-def register_user(data):
+def register_user(request):
+    data = request.data
     serializer = ProfileCreateSerializer(data=data)
 
     if serializer.is_valid():
         profile = serializer.save()
+        if settings.EMAIL_REGISTER_NOTIFICATION and len(settings.MANAGERS) > 0:
+            send_registration_notification(request, [profile])
+
         response_status = status.HTTP_201_CREATED
         response = {"type": "success",
                     "message": f"User {profile.user.email} created successfully"}
+
     else:
         response, response_status = _form_bad_request_response(
             serializer.errors)
 
     return response, response_status
+
+
+def send_registration_notification(request, profiles):
+    # TODO: Use a better way to send mails asynchronously
+    message = render_to_string('authentication/new_registration_email.html',
+                               request=request, context={"profiles": profiles})
+    try:
+        mail_managers(subject="New Sign-up on Melton App",
+                      message='', html_message=message)
+    except ValueError:
+        print("ERROR: Manager mails are not configured properly")
+    except:
+        print("ERROR: Something went wrong in sending mail")
 
 
 def check_registration(data):
@@ -62,12 +82,13 @@ def get_token(email=None, user=None):
 
     return token
 
+
 def check_profile_exists(email=None, user=None):
     profile_exists = False
     if user is not None:
-        profile_exists = Profile.objects.exists(user = user)
+        profile_exists = Profile.objects.exists(user=user)
     elif email is not None:
-        profile_exists = Profile.objects.filter(user__email = email).exists()
+        profile_exists = Profile.objects.filter(user__email=email).exists()
     return profile_exists
 
 
@@ -91,7 +112,8 @@ def login(data):
             if not check_profile_exists(email=email):
                 return ProfileDoesNotExist(email=email).to_dict(), status.HTTP_403_FORBIDDEN
 
-            response, response_status = _login_valid_user(email, token, auth_provider)
+            response, response_status = _login_valid_user(
+                email, token, auth_provider)
         else:
             response, response_status = _form_bad_request_response(
                 serializer.errors)
@@ -127,6 +149,7 @@ def _login_valid_user(email, token, auth_provider):
 
     return response, response_status
 
+
 def _get_auth_client(email, token, auth_provider):
     if auth_provider == "GOOGLE":
         return GoogleOauth(email, token)
@@ -142,12 +165,13 @@ def read_profile(user=None, email=None):
         profile = get_profile(user=user, email=email)
     except (AppUser.DoesNotExist, Profile.DoesNotExist):
         return ProfileDoesNotExist(email=email), status.HTTP_404_NOT_FOUND
-    
+
     serializer = ProfileReadUpdateSerializer(profile)
     response = {"type": "success", "profile": serializer.data}
     response_status = status.HTTP_200_OK
 
     return response, response_status
+
 
 def get_profile(user=None, email=None):
     profile = None
@@ -162,10 +186,9 @@ def get_profile(user=None, email=None):
     return profile
 
 
-
 def update_profile(user, data):
     profile = Profile.objects.prefetch_related(
-            "phone_number").get(user=user)
+        "phone_number").get(user=user)
     serializer = ProfileReadUpdateSerializer(profile, data=data)
     if serializer.is_valid():
         serializer.save()
@@ -173,9 +196,11 @@ def update_profile(user, data):
         response_status = status.HTTP_200_OK
         response = {"type": "success", "profile": serializer.data}
     else:
-        response, response_status = _form_bad_request_response(serializer.errors)
+        response, response_status = _form_bad_request_response(
+            serializer.errors)
 
     return response, response_status
+
 
 def save_profile_picture(picture_file, extension, user=None, email=None):
     if user is not None:
@@ -185,13 +210,13 @@ def save_profile_picture(picture_file, extension, user=None, email=None):
         user = AppUser.objects.get(email=email)
         profile = Profile.objects.get(user=user)
 
-    filename = email.split('@')[0] + "_" + str(uuid.uuid4().hex)[:6] + extension
+    filename = email.split('@')[0] + "_" + \
+        str(uuid.uuid4().hex)[:6] + extension
     profile.picture.save(filename, picture_file)
     profile.save()
 
     if picture_file is not None and isinstance(picture_file, File):
         picture_file.close()
-    
 
 
 def _form_bad_request_response(errors):

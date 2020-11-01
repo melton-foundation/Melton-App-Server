@@ -200,6 +200,12 @@ EMAIL_PORT = env.int('EMAIL_PORT')
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env.str('EMAIL_HOST_USER')
+EMAIL_SUBJECT_PREFIX = '[Melton App] '
+
+# Mail notifications
+ADMINS = [x.split(':') for x in env.list('DJANGO_ADMINS', default=[])]
+MANAGERS = [x.split(':') for x in env.list('DJANGO_MANAGERS', default=[])]
+EMAIL_REGISTER_NOTIFICATION = env.bool('EMAIL_REGISTER_NOTIFICATION', default=False)
 
 # Dashboard customisation
 SITE_HEADER = 'Melton Foundation Dashboard'

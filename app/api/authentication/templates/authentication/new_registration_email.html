@@ -1,0 +1,25 @@
+<div>
+    Dear admins,
+    <p style="padding-top: 1em;">
+        {% if profiles|length == 1 %}
+        We have a new sign-up on the Melton App!
+        {% else %}
+        We have {{ profiles|length }} new sign-ups on the Melton App!
+        {% endif %}
+        
+        {% for profile in profiles %}
+        <div style="padding: 0.5em 1em;margin-top: 0.5em;background-color: #EFEFEF;">
+            <div style="padding-bottom: 0.5em;"><span style="font-weight: bold;">New User: </span> {{ profile.name }}</div>
+            <div style="padding-bottom: 0.5em;"><span style="font-weight: bold;">Email: </span> {{ profile.user.email }}</div>
+            <div style="padding-bottom: 0.5em;"><span style="font-weight: bold;">Campus: </span> {{ profile.campus }}</div>
+            <div style="padding-bottom: 0.5em;"><span style="font-weight: bold;">Joined Melton Foundation in (Batch): </span> {{ profile.batch }}</div>
+        </div>
+        {% endfor %}
+        
+        <p>You can login to {{ request.scheme }}:/{{ request.get_host }}{% url 'admin:index' %} to check it out.</p>
+        <br/>
+        <br/>
+        Best Regards, <br/>
+        Melton App Team
+    </p>
+</div>

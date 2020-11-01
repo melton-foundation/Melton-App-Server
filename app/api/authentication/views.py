@@ -10,7 +10,7 @@ from authentication.serializers import ProfileListSerializer, ProfileRetrieveSer
 
 @api_view(['POST'])
 def register(request):
-    response, status = services.register_user(request.data)
+    response, status = services.register_user(request)
     return Response(response, status=status)
 
 
