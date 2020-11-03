@@ -112,7 +112,7 @@ jobs:
         run: echo "DJANGO_MANAGERS=$DJANGO_MANAGERS" >> app/api/.env
       - shell: bash
         env:
-          EMAIL_REGISTER_NOTIFICATION: $${{ secrets.EMAIL_REGISTER_NOTIFICATION }}
+          EMAIL_REGISTER_NOTIFICATION: ${{ secrets.EMAIL_REGISTER_NOTIFICATION }}
         run: echo "EMAIL_REGISTER_NOTIFICATION=$EMAIL_REGISTER_NOTIFICATION" >> app/api/.env
       # Push docker image to dockerhub after building
       - name: docker-build-push
