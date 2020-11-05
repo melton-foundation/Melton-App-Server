@@ -1,0 +1,730 @@
+openapi: 3.0.2
+servers:
+  - url: 'https://meltonapp.com/'
+  
+info:
+  title: Melton Foundation App API
+  description: |
+    API for the Melton Foundation Fellows App that provides data for Melton users, latest news from Melton Foundation and more. The main types of endpoints are  
+    
+    `Registration`
+    : API related to user sign up and checking the status of registration
+    
+    `Authentication`
+    : API for login. Initially the user has to login using Google / Apple Oauth. Upon successful login a token is generated and sent back in response. This token must be used in Authorization header of all future requests when accessing any authenticated resource.
+    > **Example** - Authorization : Token {token from server}
+    
+    `Profile`
+    : API to retrieve and modify the current user's profile. Authentication necessary.
+    
+    `Users`
+    : API to retrieve other Melton user (public) details. Authentication necessary.
+    
+    `Store`
+    : API to retrieve items that can be purchased from the Melton Store (for eg. Access to a conference). An item can be bought if an item is not already bought and user has enough points. Authentication necessary.
+    
+    `Posts`
+    : API to retrieve list or individually the posts updated by Melton admins. Authentication necessary.
+  version: 1.0.0
+
+paths:
+  /api/register/:
+    post:
+      operationId: Register
+      description: 'Register an email Id to be approved by Melton Admins'
+      summary: 'Register an email Id'
+      tags:
+        - Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                campus:
+                  type: string
+                batch:
+                  type: integer
+                  example: 2020
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'success'
+                  message:
+                    type: string
+                    example: 'User created successfully'
+          description: 'Success response once email is registered.'
+        '401':
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'failure'
+                  message:
+                    type: string
+                    example: 'Campus is required'
+          description: 'Response to invalid requests'
+  /api/registration-status/:
+    get:
+      operationId: listcheck_registrations
+      description: 'Check the status of an already registered email ID'
+      summary: 'Check the status of registration'
+      tags: 
+        - Registration
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type: 
+                    type: string
+                    example: 'success'
+                  email:
+                    type: string
+                    format: email
+                  isApproved:
+                    type: boolean
+                  message:
+                    type: string
+                    example: 'Your registration is approved'
+          description: 'Status of email registration is returned.'
+  /api/login/:
+    post:
+      operationId: Login
+      description: 'Login to Melton App either using Google or Apple Sign-in'
+      summary: 'Login to the Melton App'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                token:
+                  type: string
+                  description: 'Token obtained from Google / Apple Oauth'
+                authProvider:
+                  type: string
+                  enum: [GOOGLE, APPLE]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'success'
+                  appToken:
+                    type: string
+                    description: 'Token generated by backend to be used in all future request as part of Bearer header'
+                  message:
+                    type: string
+                    example: 'You are logged in'
+          description: 'Success response if sign in using Google or Apple OAuth is successful.'
+  /api/profile/:
+    get:
+      operationId: GetProfile
+      description: 'Retrieve the current logged in users profile'
+      summary: 'Retrieve the current logged in users profile'
+      tags:
+        - Profile
+      security: 
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  profile:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      name:
+                        type: string
+                        maxLength: 100
+                      isJuniorFellow:
+                        type: boolean
+                        readOnly: true
+                      campus:
+                        type: string
+                        maxLength: 100
+                      city:
+                        type: string
+                        maxLength: 100
+                      country:
+                        type: string
+                        maxLength: 100
+                      batch:
+                        type: integer
+                        example: 2020
+                      picture:
+                        type: string
+                        format: uri
+                      bio:
+                        type: string
+                        maxLength: 200
+                      work:
+                        type: string
+                        maxLength: 200
+                      points:
+                        type: integer
+                      phoneNumber:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PhoneNumber'
+                      socialMediaAccounts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SocialMediaAccount'
+                      sdgs:
+                        type: array
+                        items:
+                          type: integer
+                          minimum: 1
+                          maximum: 17
+                          example: 1
+          description: ''
+    post:
+      operationId: UpdateProfile
+      description: 'Update the current logged in users profile'
+      summary: 'Update the current logged in users profile'
+      tags:
+        - Profile
+      security: 
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+                name:
+                  type: string
+                  maxLength: 100
+                campus:
+                  type: string
+                  maxLength: 100
+                city:
+                  type: string
+                  maxLength: 100
+                country:
+                  type: string
+                  maxLength: 100
+                batch:
+                  type: integer
+                  example: 2020
+                bio:
+                  type: string
+                  maxLength: 200
+                work:
+                  type: string
+                  maxLength: 200
+                phoneNumber:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PhoneNumber'
+                socialMediaAccounts:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SocialMediaAccount'
+                sdgs:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+                    maximum: 17
+                    example: 1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  profile:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      name:
+                        type: string
+                        maxLength: 100
+                      isJuniorFellow:
+                        type: boolean
+                        readOnly: true
+                      campus:
+                        type: string
+                        maxLength: 100
+                      city:
+                        type: string
+                        maxLength: 100
+                      country:
+                        type: string
+                        maxLength: 100
+                      batch:
+                        type: integer
+                        example: 2020
+                      picture:
+                        type: string
+                        format: uri
+                      bio:
+                        type: string
+                        maxLength: 200
+                      work:
+                        type: string
+                        maxLength: 200
+                      points:
+                        type: integer
+                      phoneNumber:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PhoneNumber'
+                      socialMediaAccounts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SocialMediaAccount'
+                      sdgs:
+                        type: array
+                        items:
+                          type: integer
+                          minimum: 1
+                          maximum: 17
+                          example: 1
+          description: ''
+  /api/users/:
+    get:
+      operationId: listProfiles
+      description: 'Retrieve basic profile details of all registered Melton users. If a search term is present in query, only profiles with name or email matching search term are returned (case-insensitive)'
+      summary: 'Retrieve basic profile details of all registered Melton users'
+      parameters:
+      - name: search
+        required: false
+        in: query
+        description: A search term which is used to search in name and email.
+        schema:
+          type: string
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Users
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                    user:
+                      $ref: '#/components/schemas/User'
+                    name:
+                      type: string
+                      maxLength: 100
+                    isJuniorFellow:
+                      type: boolean
+                      readOnly: true
+                    campus:
+                      type: string
+                      maxLength: 100
+                    city:
+                      type: string
+                      maxLength: 100
+                    country:
+                      type: string
+                      maxLength: 100
+                    batch:
+                      type: integer
+                      example: 2020
+                    sdgs:
+                      type: array
+                      items:
+                        type: integer
+                        example: 1
+                    picture:
+                      type: string
+                      format: binary
+                      readOnly: true
+                  required:
+                  - id
+                  - user
+                  - name
+                  - campus
+                  - batch
+          description: ''
+  /api/users/{id}:
+    get:
+      operationId: retrieveProfile
+      description: 'Retrieve full profile (public details) of a Melton registered users'
+      summary: 'Retrieve full profile (public details) of a Melton registered users'
+      security: 
+        - ApiKeyAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique value identifying this profile.
+        schema:
+          type: string
+      tags:
+        - Users
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                  user:
+                    $ref: '#/components/schemas/User'
+                  name:
+                    type: string
+                    maxLength: 100
+                  isJuniorFellow:
+                    type: boolean
+                    readOnly: true
+                  campus:
+                    type: string
+                    maxLength: 100
+                  city:
+                    type: string
+                    maxLength: 100
+                  country:
+                    type: string
+                    maxLength: 100
+                  batch:
+                    type: integer
+                    maximum: 2147483647
+                    minimum: 0
+                  bio:
+                    type: string
+                    maxLength: 200
+                  work:
+                    type: string
+                    maxLength: 200
+                  phoneNumber:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PhoneNumber'
+                  socialMediaAccounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SocialMediaAccount'
+                  sdgs:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 1
+                      maximum: 17
+                      example: 1
+                  picture:
+                    type: string
+                    format: uri
+                    readOnly: true
+          description: ''
+  /api/store/:
+    get:
+      operationId: listStoreItems
+      description: 'Retrieve all items in the store  (only active items)'
+      summary: 'Retrieve all items in the store  (only active items)'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Store
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreItem'
+          description: ''
+  /api/store/{id}/:
+    get:
+      operationId: retrieveStoreItem
+      description: 'Retrieve a particular store item by its ID  (only active items)'
+      summary: 'Retrieve a particular store item by its ID (only active items)'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Store
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this store item.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreItem'
+          description: ''
+  /api/store/{name}/name/:
+    get:
+      operationId: GetStoreItemByName
+      description: 'Retrieve a store item by its name. A case insensitive, partial match is done for the query parameter with names of all items in the store  (only active items)'
+      summary: 'Retrieve a store item by its name  (only active items)'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Store
+      parameters:
+      - name: name
+        in: path
+        required: true
+        description: A string for searching the names of Store Items.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreItem'
+          description: ''
+  /api/buy/:
+    post:
+      operationId: BuyItem
+      description: 'Buy a store item. The transaction will be successful only if the item ID is valid, user has enough points and also has not bought the item before  (only active items)'
+      summary: 'Buy a store item  (only active items)'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemId:
+                  type: integer
+                  example: 1
+              required:
+                - itemId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: 'success'
+                  message:
+                    type: string
+                    example: 'Successfully bought.'
+                  details:
+                    type: object
+                    properties:
+                      availablePoints:
+                        type: integer
+          description: ''
+  /api/posts/:
+    get:
+      operationId: listPosts
+      description: 'Retrieve basic details of all News posts updated by Melton admins. If a search term is present in query, only posts with title, description or tags matching search term are returned (case-insensitive)'
+      summary: 'Retrieve basic details of all News posts updated by Melton admins'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Posts
+      parameters:
+      - name: search
+        required: false
+        in: query
+        description: A search term which is used to search in title, description and tags.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                      maxLength: 200
+                    preview:
+                      type: string
+                      format: uri
+                      description: Preview image for the post
+                    description:
+                      type: string
+                      description: A short text describing the post
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    created:
+                      type: string
+                      format: date-time
+                    updated:
+                      type: string
+                      format: date-time
+
+          description: ''
+  /api/posts/{id}:
+    get:
+      operationId: retrievePost
+      description: 'Retrieve all details of a News post updated by Melton admins by ID  (only active items)'
+      summary: 'Retrieve all details of a News post updated by Melton admins by ID  (only active items)'
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Posts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this post.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  title:
+                    type: string
+                    maxLength: 200
+                  preview:
+                    type: string
+                    format: uri
+                    description: Preview image for the post
+                  description:
+                    type: string
+                    description: A short text describing the post
+                  content:
+                    type: string
+                    description: Content of post in markdown.
+                  created:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  tags:
+                    type: array
+                    items:
+                      type: string
+          description: ''
+  
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+    SocialMediaAccount:
+      type: object
+      properties:
+        type:
+          type: string
+          example: LinkedIn
+        account:
+          type: string
+          format: uri
+      required:
+        - type
+        - account
+    PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          pattern: '^\d+$'
+          example: '9876543210'
+        countryCode:
+          type: string
+          example: '+91'
+      required:
+        - number
+    StoreItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        previewImage:
+          type: string
+          format: uri
+          readOnly: true
+        description:
+          type: string
+          maxLength: 500
+        points:
+          type: integer
+          example: 200
+        active:
+          type: boolean
+        purchased:
+          type: boolean
+  
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization

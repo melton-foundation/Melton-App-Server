@@ -5,6 +5,7 @@ from django.contrib.auth.views import (PasswordResetCompleteView,
                                        PasswordResetDoneView,
                                        PasswordResetView)
 from django.http import JsonResponse
+from django.shortcuts import render
 from sentry_sdk import capture_message
 
 
@@ -51,6 +52,9 @@ def index(request):
         'Description': 'An API for Melton Foundation Fellows App'
     }
     return JsonResponse(json)
+
+def docs(request):
+    return render(request, 'openapi/index.html')
 
 
 class AdminViewContext(object):

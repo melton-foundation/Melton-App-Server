@@ -132,7 +132,7 @@ dmypy.json
 
 
 #Collected static files
-staticfiles/
+static/
 .nginx/
 
 # pycharm

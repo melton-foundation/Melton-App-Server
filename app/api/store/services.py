@@ -15,13 +15,13 @@ def buy_item(data, user):
 
         if item is None:
             response = ItemNotAvailable().to_dict()
-            response_status = status.HTTP_204_NO_CONTENT
+            response_status = status.HTTP_404_NOT_FOUND
         elif item.points > user_points:
             response = InsufficientPoints(user, item).to_dict()
-            response_status = status.HTTP_200_OK
+            response_status = status.HTTP_422_UNPROCESSABLE_ENTITY
         elif item_purchased(user, item):
             response = ItemAlreadyOwned().to_dict()
-            response_status = status.HTTP_200_OK
+            response_status = status.HTTP_422_UNPROCESSABLE_ENTITY
         else:
             Transaction.objects.buy_item(user, item)
             response = ItemBought(user, item).to_dict()
