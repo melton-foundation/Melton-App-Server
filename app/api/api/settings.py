@@ -211,6 +211,9 @@ ADMINS = [x.split(':') for x in env.list('DJANGO_ADMINS', default=[])]
 MANAGERS = [x.split(':') for x in env.list('DJANGO_MANAGERS', default=[])]
 EMAIL_REGISTER_NOTIFICATION = env.bool('EMAIL_REGISTER_NOTIFICATION', default=False)
 
+# Feature Flag for autoapproving new users
+AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL = env.bool('AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL', default=False)
+
 # Dashboard customisation
 SITE_HEADER = 'Melton Foundation Dashboard'
 SITE_TITLE = 'Melton Foundation Admin'
