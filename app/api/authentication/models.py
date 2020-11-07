@@ -112,7 +112,10 @@ class SustainableDevelopmentGoal(models.Model):
 class ProfileManager(models.Manager):
 
     def create(self, email, name, is_junior_fellow, campus, batch, points=0):
-        user = AppUser(email=email, is_active=False)
+        if settings.AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL:
+            user = AppUser(email=email, is_active=True)
+        else:
+            user = AppUser(email=email, is_active=False)
         user.save()
 
         profile = Profile(user=user, name=name, is_junior_fellow=is_junior_fellow,

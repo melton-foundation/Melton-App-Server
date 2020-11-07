@@ -114,6 +114,10 @@ jobs:
         env:
           EMAIL_REGISTER_NOTIFICATION: ${{ secrets.EMAIL_REGISTER_NOTIFICATION }}
         run: echo "EMAIL_REGISTER_NOTIFICATION=$EMAIL_REGISTER_NOTIFICATION" >> app/api/.env
+      - shell: bash
+          env:
+            AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL: ${{ secrets.AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL }}
+          run: echo "AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL=$AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL" >> app/api/.env
       # Push docker image to dockerhub after building
       - name: docker-build-push
         uses: docker/build-push-action@v1
