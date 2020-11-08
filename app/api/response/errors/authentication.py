@@ -18,3 +18,8 @@ class AccountNotApproved(FunctionalError):
         super().__init__("Your registration is Pending", 103)
         if email is not None:
             self.details = {"email": email}
+
+class InvalidAppleUser(FunctionalError):
+    def __init__(self, email=None, apple_id=None):
+        super().__init__("Invalid Apple account", 104)
+        self.details = {"email": email, "appleId": apple_id}

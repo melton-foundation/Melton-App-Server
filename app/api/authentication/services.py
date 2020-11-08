@@ -6,11 +6,12 @@ from django.core.mail import mail_managers
 from django.template.loader import render_to_string
 from response.errors.authentication import (AccountNotApproved,
                                             ProfileDoesNotExist,
-                                            UserNotRegistered)
+                                            UserNotRegistered,
+                                            InvalidAppleUser)
 from rest_framework import exceptions, status
 
 from authentication.authentication import AppleOauth, GoogleOauth, WeChatOauth
-from authentication.models import AppUser, ExpiringToken, Profile
+from authentication.models import AppUser, ExpiringToken, Profile, AppleUser
 from authentication.serializers import (LoginSerializer,
                                         ProfileCreateSerializer,
                                         ProfileReadUpdateSerializer,
@@ -91,6 +92,31 @@ def check_profile_exists(email=None, user=None):
         profile_exists = Profile.objects.filter(user__email=email).exists()
     return profile_exists
 
+def search_apple_user_email(apple_id):
+    email = None
+    count = 0
+    apple_users = AppleUser.objects.filter(apple_id = apple_id)
+    for user in apple_users:
+        if check_profile_exists(email = user.email):
+            email = user.email
+            count += 1
+    
+    if count == 1:
+        return email
+    else:
+        return None
+
+def get_email_for_apple_user(email, apple_id):
+    if email is not None and apple_id is not None:
+        AppleUser.objects.update_or_create(email = email, defaults = {"apple_id": apple_id})
+        return search_apple_user_email(apple_id)
+    elif email is not None and apple_id is None:
+        return email
+    elif email is None and apple_id is not None:
+        return search_apple_user_email(apple_id)
+    else:
+        return None
+
 
 def login(data):
     data = _normalise_login_data(data)
@@ -99,8 +125,15 @@ def login(data):
     try:
         if serializer.is_valid():
             email = serializer.validated_data["email"]
+            apple_id = serializer.validated_data["appleId"]
             token = serializer.validated_data["token"]
             auth_provider = serializer.validated_data["authProvider"]
+
+            if (auth_provider == "APPLE"):
+                email = get_email_for_apple_user(email, apple_id)
+                if email is None: 
+                    return InvalidAppleUser(email=email, apple_id=apple_id).to_dict(), status.HTTP_403_FORBIDDEN
+
             response, response_status = check_registration({"email": email})
 
             if (response_status == status.HTTP_204_NO_CONTENT):
