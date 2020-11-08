@@ -199,3 +199,10 @@ class SocialMediaAccount(models.Model):
     def __str__(self):
         return f'{self.type} : {self.account}'
 
+class AppleUser(models.Model):
+    email = models.EmailField(primary_key=True)
+    apple_id = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.email
+

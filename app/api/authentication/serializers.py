@@ -153,6 +153,15 @@ class RegistrationStatusSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+    email = serializers.EmailField(allow_null=True)
+    appleId = serializers.CharField(allow_null=True)
     token = serializers.CharField(required=True)
     authProvider = serializers.ChoiceField(AUTH_PROVIDERS, required=True)
+
+    def validate(self, attrs):
+        if attrs['authProvider'] == 'GOOGLE' and attrs['email'] is None:
+            raise serializers.ValidationError({'email': 'This field cannot be null'})
+        elif attrs['authProvider'] == 'APPLE' and attrs.get('email', None) is None and attrs.get('appleId', None) is None:
+            raise serializers.ValidationError('Both and email and appleId cannot be null together.')
+
+        return super().validate(attrs)
