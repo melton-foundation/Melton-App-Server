@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from rest_framework.authtoken.models import Token
 
 from authentication.forms import AppUserChangeForm, AppUserCreationForm
-from authentication.models import (AppUser, ExpiringToken, PhoneNumber,
+from authentication.models import (AppUser, AppleUser, ExpiringToken, PhoneNumber,
                                    Profile, SocialMediaAccount,
                                    SustainableDevelopmentGoal)
 
