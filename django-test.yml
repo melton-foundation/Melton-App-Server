@@ -1,0 +1,136 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Django Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - shell: bash
+      env:
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      run: echo "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" > app/api/.env
+    - shell: bash
+      env:
+        DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+      run: echo "DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS" >> app/api/.env
+    - shell: bash
+      env:
+        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      run: echo "SENTRY_DSN=$SENTRY_DSN" >> app/api/.env
+    - shell: bash
+      env:
+        GAUTH_ANDROID_CLIENT_ID: ${{ secrets.GAUTH_ANDROID_CLIENT_ID }}
+      run: echo "GAUTH_ANDROID_CLIENT_ID=$GAUTH_ANDROID_CLIENT_ID" >> app/api/.env
+    - shell: bash
+      env:
+        GAUTH_IOS_CLIENT_ID: ${{ secrets.GAUTH_IOS_CLIENT_ID }}
+      run: echo "GAUTH_IOS_CLIENT_ID=$GAUTH_IOS_CLIENT_ID" >> app/api/.env
+    - shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      run: echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> app/api/.env
+    - shell: bash
+      env:
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> app/api/.env
+    - shell: bash
+      env:
+        AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+      run: echo "AWS_STORAGE_BUCKET_NAME=$AWS_STORAGE_BUCKET_NAME" >> app/api/.env
+    - shell: bash
+      env:
+        DB_DEFAULT: "dev"
+      run: echo "DB_DEFAULT=$DB_DEFAULT" >> app/api/.env
+    - shell: bash
+      env:
+        DB_HOST: ${{ secrets.DB_HOST }}
+      run: echo "DB_HOST=$DB_HOST" >> app/api/.env
+    - shell: bash
+      env:
+        DB_PORT: ${{ secrets.DB_PORT }}
+      run: echo "DB_PORT=$DB_PORT" >> app/api/.env
+    - shell: bash
+      env:
+        DB_NAME: ${{ secrets.DB_NAME }}
+      run: echo "DB_NAME=$DB_NAME" >> app/api/.env
+    - shell: bash
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+      run: echo "DB_USER=$DB_USER" >> app/api/.env
+    - shell: bash
+      env:
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      run: echo "DB_PASSWORD=$DB_PASSWORD" >> app/api/.env
+    - shell: bash
+      env:
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+      run: echo "EMAIL_HOST=$EMAIL_HOST" >> app/api/.env
+    - shell: bash
+      env:
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+      run: echo "EMAIL_PORT=$EMAIL_PORT" >> app/api/.env
+    - shell: bash
+      env:
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+      run: echo "EMAIL_HOST_USER=$EMAIL_HOST_USER" >> app/api/.env
+    - shell: bash
+      env:
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+      run: echo "EMAIL_HOST_PASSWORD=$EMAIL_HOST_PASSWORD" >> app/api/.env
+    - shell: bash
+      env:
+        APPLE_OAUTH_CLIENT_ID: ${{ secrets.APPLE_OAUTH_CLIENT_ID }}
+      run: echo "APPLE_OAUTH_CLIENT_ID=$APPLE_OAUTH_CLIENT_ID" >> app/api/.env
+    - shell: bash
+      env:
+        APPLE_OAUTH_KEY_ID: ${{ secrets.APPLE_OAUTH_KEY_ID }}
+      run: echo "APPLE_OAUTH_KEY_ID=$APPLE_OAUTH_KEY_ID" >> app/api/.env
+    - shell: bash
+      env:
+        APPLE_OAUTH_TEAM_ID: ${{ secrets.APPLE_OAUTH_TEAM_ID }}
+      run: echo "APPLE_OAUTH_TEAM_ID=$APPLE_OAUTH_TEAM_ID" >> app/api/.env
+    - shell: bash
+      env:
+        APPLE_OATH_PRIVATE_KEY: ${{ secrets.APPLE_OATH_PRIVATE_KEY }}
+      run: echo "APPLE_OATH_PRIVATE_KEY=$APPLE_OATH_PRIVATE_KEY" >> app/api/.env
+    - shell: bash
+      env:
+        DJANGO_ADMINS: ${{ secrets.DJANGO_ADMINS }}
+      run: echo "DJANGO_ADMINS=$DJANGO_ADMINS" >> app/api/.env
+    - shell: bash
+      env:
+        DJANGO_MANAGERS: ${{ secrets.DJANGO_MANAGERS }}
+      run: echo "DJANGO_MANAGERS=$DJANGO_MANAGERS" >> app/api/.env
+    - shell: bash
+      env:
+        EMAIL_REGISTER_NOTIFICATION: ${{ secrets.EMAIL_REGISTER_NOTIFICATION }}
+      run: echo "EMAIL_REGISTER_NOTIFICATION=$EMAIL_REGISTER_NOTIFICATION" >> app/api/.env
+    - shell: bash
+      env:
+        AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL: ${{ secrets.AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL }}
+      run: echo "AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL=$AUTOAPPROVE_WITHOUT_ADMIN_APPROVAL" >> app/api/.env
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      working-directory: './app/api'
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Test django application
+      run: |
+        python manage.py migrate
+        python manage.py test
