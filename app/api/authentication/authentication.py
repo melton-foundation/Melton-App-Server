@@ -37,19 +37,20 @@ class ExpiringTokenAuthentication(TokenAuthentication):
 
         if not token.user.is_active:
             raise exceptions.PermissionDenied(
-                localize("Your account has not been approved yet."))
+                localize("Your account has not been approved yet.")
+            )
 
         if token.expired:
             token.delete()
             raise exceptions.AuthenticationFailed(
-                localize("Token has expired. Please login again."))
+                localize("Token has expired. Please login again.")
+            )
 
         token.refresh()
         return (token.user, token)
 
 
 class OauthSignIn(ABC):
-
     def __init__(self, claimed_email, token):
         self.claimed_email = claimed_email
         self.token = token
@@ -82,12 +83,15 @@ class OauthSignIn(ABC):
 
 
 class GoogleOauth(OauthSignIn):
-
     def login(self):
         idinfo = id_token.verify_oauth2_token(self.token, requests.Request())
 
-        if (not isinstance(idinfo, dict) or idinfo["aud"] not in [settings.GAUTH_ANDROID_CLIENT_ID, settings.GAUTH_IOS_CLIENT_ID] 
-            or "email" not in idinfo):
+        if (
+            not isinstance(idinfo, dict)
+            or idinfo["aud"]
+            not in [settings.GAUTH_ANDROID_CLIENT_ID, settings.GAUTH_IOS_CLIENT_ID]
+            or "email" not in idinfo
+        ):
             raise exceptions.AuthenticationFailed("Invalid token")
 
         if idinfo["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
@@ -98,6 +102,7 @@ class GoogleOauth(OauthSignIn):
 
         success = self.check_claim(idinfo["email"])
         return success
+
 
 class AppleOauth(OauthSignIn):
 
@@ -114,7 +119,6 @@ class AppleOauth(OauthSignIn):
             "client_secret": client_secret,
             "code": self.token,
             "grant_type": "authorization_code",
-
         }
 
         res = rq.post(AppleOauth.ACCESS_TOKEN_URL, data=data, headers=headers)
@@ -122,7 +126,7 @@ class AppleOauth(OauthSignIn):
 
         if res.status_code == 400:
             error_message = idinfo.get("error", "Authentication failed.")
-            raise exceptions.AuthenticationFailed(error_message) 
+            raise exceptions.AuthenticationFailed(error_message)
 
         id_token = idinfo.get("id_token", None)
 
@@ -131,16 +135,14 @@ class AppleOauth(OauthSignIn):
             idinfo.update({"email": decoded["email"]}) if "email" in decoded else None
             idinfo.update({"uid": decoded["sub"]}) if "sub" in decoded else None
 
-        if not "email" in idinfo:
+        if "email" not in idinfo:
             raise exceptions.AuthenticationFailed("Invalid token.")
 
         success = self.check_claim(idinfo["email"])
         return success
 
     def get_key_and_secret(self):
-        headers = {
-            "kid": settings.APPLE_OAUTH_KEY_ID
-        }
+        headers = {"kid": settings.APPLE_OAUTH_KEY_ID}
 
         payload = {
             "iss": settings.APPLE_OAUTH_TEAM_ID,
@@ -151,16 +153,12 @@ class AppleOauth(OauthSignIn):
         }
 
         client_secret = jwt.encode(
-            payload, 
-            settings.APPLE_OATH_PRIVATE_KEY, 
-            algorithm="ES256", 
-            headers=headers
+            payload, settings.APPLE_OATH_PRIVATE_KEY, algorithm="ES256", headers=headers
         ).decode("utf-8")
-        
+
         return settings.APPLE_OAUTH_CLIENT_ID, client_secret
 
 
 class WeChatOauth(OauthSignIn):
-
     def login(self):
         return False

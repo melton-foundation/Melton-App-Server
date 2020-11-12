@@ -9,20 +9,25 @@ from posts import services
 class PostForm(ModelForm):
 
     tags_display = CharField(
-        label='Tags', help_text='Enter comma separated values', required=False, widget=TextInput(attrs={'class': 'vTextField'}))
+        label="Tags",
+        help_text="Enter comma separated values",
+        required=False,
+        widget=TextInput(attrs={"class": "vTextField"}),
+    )
 
     def __init__(self, *args, **kwargs):
         self._tags = []
         tag_values = []
-        if 'instance' in kwargs and kwargs['instance'] is not None:
-            tag_values = services.get_post_tags(id=kwargs['instance'].id)
+        if "instance" in kwargs and kwargs["instance"] is not None:
+            tag_values = services.get_post_tags(id=kwargs["instance"].id)
         super().__init__(*args, **kwargs)
         if self.initial != {}:
-            self.initial['tags_display'] = ' , '.join(tag_values)
+            self.initial["tags_display"] = " , ".join(tag_values)
 
     def save(self, *args, **kwargs):
-        self._tags = [tag.strip() for tag in self.cleaned_data.get(
-            'tags_display', '').split(',')]
+        self._tags = [
+            tag.strip() for tag in self.cleaned_data.get("tags_display", "").split(",")
+        ]
         post = super().save()
         post.update_tags(self._tags)
         return post
@@ -33,14 +38,14 @@ class PostForm(ModelForm):
 
     class Meta:
         model = Post
-        exclude = ('tags', )
+        exclude = ("tags",)
 
 
 class PostAdmin(MarkdownxModelAdmin):
     model = Post
     form = PostForm
-    list_display = ('title', 'created', 'updated', 'active')
-    list_editable = ('active', )
+    list_display = ("title", "created", "updated", "active")
+    list_editable = ("active",)
 
 
 admin.site.register(Post, PostAdmin)

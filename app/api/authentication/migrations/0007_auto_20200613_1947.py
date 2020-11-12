@@ -7,14 +7,14 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0006_auto_20200301_1213'),
+        ("authentication", "0006_auto_20200301_1213"),
     ]
 
     operations = [
         migrations.AlterModelManagers(
-            name='appuser',
+            name="appuser",
             managers=[
-                ('objects', authentication.models.AppUserManager()),
+                ("objects", authentication.models.AppUserManager()),
             ],
         ),
     ]

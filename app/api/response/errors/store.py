@@ -11,8 +11,9 @@ class InsufficientPoints(FunctionalError):
         super().__init__("Not enough points to buy the requested item.", 202)
         self.details = {
             "availablePoints": user.profile.points,
-            "requiredPoints": item.points
+            "requiredPoints": item.points,
         }
+
 
 class ItemAlreadyOwned(FunctionalError):
     def __init__(self):

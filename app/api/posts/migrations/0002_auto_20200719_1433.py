@@ -7,23 +7,29 @@ import markdownx.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0001_initial'),
+        ("posts", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='active',
+            model_name="post",
+            name="active",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='post',
-            name='description',
-            field=models.TextField(blank=True, help_text='Add a short text describing the post', verbose_name='Short Description'),
+            model_name="post",
+            name="description",
+            field=models.TextField(
+                blank=True,
+                help_text="Add a short text describing the post",
+                verbose_name="Short Description",
+            ),
         ),
         migrations.AlterField(
-            model_name='post',
-            name='content',
-            field=markdownx.models.MarkdownxField(help_text='Write content of post in markdown. To add images, drag and drop them onto the content text field.'),
+            model_name="post",
+            name="content",
+            field=markdownx.models.MarkdownxField(
+                help_text="Write content of post in markdown. To add images, drag and drop them onto the content text field."
+            ),
         ),
     ]

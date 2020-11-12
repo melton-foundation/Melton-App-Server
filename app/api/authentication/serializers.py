@@ -1,26 +1,35 @@
 from rest_framework import serializers
 
-from authentication.models import AppUser, PhoneNumber, Profile, ExpiringToken, SocialMediaAccount, SustainableDevelopmentGoal
+from authentication.models import (
+    AppUser,
+    PhoneNumber,
+    Profile,
+    SocialMediaAccount,
+    SustainableDevelopmentGoal,
+)
 
-AUTH_PROVIDERS = ['GOOGLE', 'APPLE']
+AUTH_PROVIDERS = ["GOOGLE", "APPLE"]
+
 
 class AppUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = ['email']
+        fields = ["email"]
 
 
 class PhoneNumberSerializer(serializers.ModelSerializer):
-    countryCode = serializers.CharField(source='country_code')
+    countryCode = serializers.CharField(source="country_code")
 
     class Meta:
         model = PhoneNumber
-        fields = ['number', 'countryCode']
+        fields = ["number", "countryCode"]
+
 
 class SocialMediaAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialMediaAccount
-        fields = ['type', 'account']
+        fields = ["type", "account"]
+
 
 class SustainableDevelopmentGoalSerializer(serializers.RelatedField):
 
@@ -28,14 +37,14 @@ class SustainableDevelopmentGoalSerializer(serializers.RelatedField):
 
     def to_internal_value(self, data):
         if int(data) != data:
-            raise serializers.ValidationError('Only integer values are allowed.')
+            raise serializers.ValidationError("Only integer values are allowed.")
 
-        if not SustainableDevelopmentGoal.objects.filter(pk = data).exists():
-            raise serializers.ValidationError('No such SDG exists.')
+        if not SustainableDevelopmentGoal.objects.filter(pk=data).exists():
+            raise serializers.ValidationError("No such SDG exists.")
         return int(data)
 
     def to_representation(self, value):
-         return value.code
+        return value.code
 
     class Meta:
         model = SustainableDevelopmentGoal
@@ -43,97 +52,152 @@ class SustainableDevelopmentGoalSerializer(serializers.RelatedField):
 
 class _ProfileSerializer(serializers.ModelSerializer):
     user = AppUserSerializer()
-    isJuniorFellow = serializers.BooleanField(source='is_junior_fellow', read_only=True)
+    isJuniorFellow = serializers.BooleanField(source="is_junior_fellow", read_only=True)
     points = serializers.IntegerField(read_only=True)
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
+    phoneNumber = PhoneNumberSerializer(
+        source="phone_number", many=True, required=False
+    )
     picture = serializers.ImageField(read_only=True)
-    socialMediaAccounts = SocialMediaAccountSerializer(source='social_media_account', many=True, required=False)
+    socialMediaAccounts = SocialMediaAccountSerializer(
+        source="social_media_account", many=True, required=False
+    )
     sdgs = SustainableDevelopmentGoalSerializer(required=False, many=True)
 
     def validate_sdgs(self, sdgs):
         if sdgs is not None and len(sdgs) > 3:
-            raise serializers.ValidationError('Only 3 SDGs are allowed')
+            raise serializers.ValidationError("Only 3 SDGs are allowed")
         return sdgs
 
     class Meta:
         model = Profile
-        fields = ['user', 'name', 'isJuniorFellow',
-                  'campus', 'city', 'country', 'batch', 'bio', 'work', 'points', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
+        fields = [
+            "user",
+            "name",
+            "isJuniorFellow",
+            "campus",
+            "city",
+            "country",
+            "batch",
+            "bio",
+            "work",
+            "points",
+            "phoneNumber",
+            "socialMediaAccounts",
+            "sdgs",
+            "picture",
+        ]
         depth = 1
 
 
 class ProfileListSerializer(_ProfileSerializer):
-    id = serializers.IntegerField(source='user.id')
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
+    id = serializers.IntegerField(source="user.id")
+    phoneNumber = PhoneNumberSerializer(
+        source="phone_number", many=True, required=False
+    )
 
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'name', 'isJuniorFellow',
-                  'campus', 'city', 'country', 'batch', 'sdgs', 'picture']
+        fields = [
+            "id",
+            "user",
+            "name",
+            "isJuniorFellow",
+            "campus",
+            "city",
+            "country",
+            "batch",
+            "sdgs",
+            "picture",
+        ]
         depth = 1
+
 
 class ProfileRetrieveSerializer(_ProfileSerializer):
-    id = serializers.IntegerField(source='user.id')
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
+    id = serializers.IntegerField(source="user.id")
+    phoneNumber = PhoneNumberSerializer(
+        source="phone_number", many=True, required=False
+    )
 
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'name', 'isJuniorFellow', 'campus', 'city', 'country', 
-                    'batch',  'bio', 'work', 'phoneNumber', 'socialMediaAccounts', 'sdgs', 'picture']
+        fields = [
+            "id",
+            "user",
+            "name",
+            "isJuniorFellow",
+            "campus",
+            "city",
+            "country",
+            "batch",
+            "bio",
+            "work",
+            "phoneNumber",
+            "socialMediaAccounts",
+            "sdgs",
+            "picture",
+        ]
         depth = 1
 
-class ProfileCreateSerializer(_ProfileSerializer):
 
+class ProfileCreateSerializer(_ProfileSerializer):
     def create(self, validated_data):
         profile = Profile.objects.create(
-            email=validated_data['user']['email'],
-            name=validated_data['name'],
+            email=validated_data["user"]["email"],
+            name=validated_data["name"],
             is_junior_fellow=False,
-            campus=validated_data['campus'],
-            batch=validated_data['batch']
+            campus=validated_data["campus"],
+            batch=validated_data["batch"],
         )
         return profile
 
     class Meta:
         model = Profile
-        fields = ['user', 'name', 'isJuniorFellow',
-                  'campus', 'batch']
+        fields = ["user", "name", "isJuniorFellow", "campus", "batch"]
 
 
 class ProfileReadUpdateSerializer(_ProfileSerializer):
-    phoneNumber = PhoneNumberSerializer(source='phone_number', many = True, required=False)
+    phoneNumber = PhoneNumberSerializer(
+        source="phone_number", many=True, required=False
+    )
     user = AppUserSerializer(read_only=True)
     points = serializers.IntegerField(read_only=True)
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.campus = validated_data.get('campus', instance.campus)
-        instance.city = validated_data.get('city', instance.city)
-        instance.country = validated_data.get('country', instance.country)
-        instance.bio = validated_data.get('bio', instance.bio)
-        instance.work = validated_data.get('work', instance.work)
-        instance.batch = validated_data.get('batch', instance.batch)
+        instance.name = validated_data.get("name", instance.name)
+        instance.campus = validated_data.get("campus", instance.campus)
+        instance.city = validated_data.get("city", instance.city)
+        instance.country = validated_data.get("country", instance.country)
+        instance.bio = validated_data.get("bio", instance.bio)
+        instance.work = validated_data.get("work", instance.work)
+        instance.batch = validated_data.get("batch", instance.batch)
         # Delete existing phone numbers and add new ones
-        _ph_query = PhoneNumber.objects.filter(user_profile = instance)
+        _ph_query = PhoneNumber.objects.filter(user_profile=instance)
         existing_phone_numbers = list(_ph_query)
         _ph_query.delete()
-        for phone_number in validated_data.get('phone_number', existing_phone_numbers):
-            phone_number_obj = PhoneNumber(user_profile = instance, country_code = phone_number.get('country_code'), 
-                                        number = phone_number.get('number'))
+        for phone_number in validated_data.get("phone_number", existing_phone_numbers):
+            phone_number_obj = PhoneNumber(
+                user_profile=instance,
+                country_code=phone_number.get("country_code"),
+                number=phone_number.get("number"),
+            )
             phone_number_obj.save()
 
         # Delete existing social media and add new ones
-        _social_media_query = SocialMediaAccount.objects.filter(user_profile = instance)
+        _social_media_query = SocialMediaAccount.objects.filter(user_profile=instance)
         existing_social_media = list(_social_media_query)
         _social_media_query.delete()
-        for social_media_account in validated_data.get('social_media_account', existing_social_media):
-            social_media_acc_obj = SocialMediaAccount(user_profile = instance, type = social_media_account.get('type'), 
-                                                account = social_media_account.get('account'))
+        for social_media_account in validated_data.get(
+            "social_media_account", existing_social_media
+        ):
+            social_media_acc_obj = SocialMediaAccount(
+                user_profile=instance,
+                type=social_media_account.get("type"),
+                account=social_media_account.get("account"),
+            )
             social_media_acc_obj.save()
 
-        instance.update_sdgs(validated_data.get('sdgs', None))
+        instance.update_sdgs(validated_data.get("sdgs", None))
 
-        
         instance.save()
         instance.refresh_from_db()
         return instance
@@ -144,7 +208,7 @@ class RegistrationStatusSerializer(serializers.Serializer):
     is_active = serializers.BooleanField(read_only=True)
 
     def check_status(self):
-        user = AppUser.objects.filter(email=self.validated_data['email'])
+        user = AppUser.objects.filter(email=self.validated_data["email"])
         if user:
             return user.get().is_active
 
@@ -159,9 +223,15 @@ class LoginSerializer(serializers.Serializer):
     authProvider = serializers.ChoiceField(AUTH_PROVIDERS, required=True)
 
     def validate(self, attrs):
-        if attrs['authProvider'] == 'GOOGLE' and attrs['email'] is None:
-            raise serializers.ValidationError({'email': 'This field cannot be null'})
-        elif attrs['authProvider'] == 'APPLE' and attrs.get('email', None) is None and attrs.get('appleId', None) is None:
-            raise serializers.ValidationError('Both and email and appleId cannot be null together.')
+        if attrs["authProvider"] == "GOOGLE" and attrs["email"] is None:
+            raise serializers.ValidationError({"email": "This field cannot be null"})
+        elif (
+            attrs["authProvider"] == "APPLE"
+            and attrs.get("email", None) is None
+            and attrs.get("appleId", None) is None
+        ):
+            raise serializers.ValidationError(
+                "Both and email and appleId cannot be null together."
+            )
 
         return super().validate(attrs)

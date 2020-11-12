@@ -8,11 +8,11 @@ class CaseInsensitiveFieldMixin:
     """
 
     LOOKUP_CONVERSIONS = {
-        'exact': 'iexact',
-        'contains': 'icontains',
-        'startswith': 'istartswith',
-        'endswith': 'iendswith',
-        'regex': 'iregex',
+        "exact": "iexact",
+        "contains": "icontains",
+        "startswith": "istartswith",
+        "endswith": "iendswith",
+        "regex": "iregex",
     }
 
     def get_lookup(self, lookup_name):
@@ -39,15 +39,21 @@ class Tag(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    preview = models.ImageField(upload_to='post-previews', blank=True, help_text='Preview image for the post')
-    description = models.TextField(verbose_name='Short Description',
-                                   blank=True, help_text='Add a short text describing the post')
+    preview = models.ImageField(
+        upload_to="post-previews", blank=True, help_text="Preview image for the post"
+    )
+    description = models.TextField(
+        verbose_name="Short Description",
+        blank=True,
+        help_text="Add a short text describing the post",
+    )
     content = MarkdownxField(
-        help_text='Write content of post in markdown. To add images, drag and drop them onto the content text field.')
+        help_text="Write content of post in markdown. To add images, drag and drop them onto the content text field."
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-    tags = models.ManyToManyField(Tag, related_name='posts')
+    tags = models.ManyToManyField(Tag, related_name="posts")
 
     def update_tags(self, tags):
         if tags is not None and len(tags) > 0:
@@ -56,7 +62,7 @@ class Post(models.Model):
                 self.tags.remove(tag)
 
             for tag in tags:
-                if tag.strip() == '':
+                if tag.strip() == "":
                     continue
                 tag, _ = Tag.objects.get_or_create(tag=tag)
                 self.tags.add(tag)
@@ -65,4 +71,4 @@ class Post(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['-updated']
+        ordering = ["-updated"]

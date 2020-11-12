@@ -1,16 +1,20 @@
 from rest_framework import status
-from store.serializers import BuyTransactionSerializer, TransactionSerializer
+from store.serializers import BuyTransactionSerializer
 from store.models import StoreItem, Transaction
 from response.success.store import ItemBought
 from response.errors.store import InsufficientPoints, ItemAlreadyOwned, ItemNotAvailable
 from response.errors.common import _form_bad_request_response
 
+
 def buy_item(data, user):
-    serializer = BuyTransactionSerializer(data = data)
+    serializer = BuyTransactionSerializer(data=data)
     if serializer.is_valid():
-        item = get_item(item_id = serializer.data.get("itemId", None), item_name=serializer.data.get("itemName", None))
+        item = get_item(
+            item_id=serializer.data.get("itemId", None),
+            item_name=serializer.data.get("itemName", None),
+        )
         user_points = 0
-        if not user.profile.points is None:
+        if user.profile.points is not None:
             user_points = user.profile.points
 
         if item is None:
@@ -26,7 +30,7 @@ def buy_item(data, user):
             Transaction.objects.buy_item(user, item)
             response = ItemBought(user, item).to_dict()
             response_status = status.HTTP_200_OK
-        
+
     else:
         response, response_status = _form_bad_request_response(serializer.errors)
 
@@ -39,12 +43,12 @@ def item_purchased(user, item):
 
 def get_item(item_id=None, item_name=None):
     item = None
-    if not item_id is None:
-        item = StoreItem.objects.filter(active = True).filter(pk = item_id)
-    elif not item_name is None:
-        item = StoreItem.objects.filter(active = True).filter(name__iexact = item_name)
+    if item_id is not None:
+        item = StoreItem.objects.filter(active=True).filter(pk=item_id)
+    elif item_name is not None:
+        item = StoreItem.objects.filter(active=True).filter(name__iexact=item_name)
 
-    if not item is None and item:
+    if item is not None and item:
         return item.first()
     else:
         return None

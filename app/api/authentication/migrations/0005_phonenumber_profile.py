@@ -8,28 +8,51 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0004_auto_20200229_2309'),
+        ("authentication", "0004_auto_20200229_2309"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('name', models.CharField(max_length=100)),
-                ('is_junior_fellow', models.BooleanField()),
-                ('campus', models.CharField(max_length=100)),
-                ('batch', models.PositiveIntegerField()),
-                ('points', models.PositiveIntegerField()),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("is_junior_fellow", models.BooleanField()),
+                ("campus", models.CharField(max_length=100)),
+                ("batch", models.PositiveIntegerField()),
+                ("points", models.PositiveIntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='PhoneNumber',
+            name="PhoneNumber",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('country_code', models.CharField(blank=True, max_length=5)),
-                ('number', models.CharField(max_length=30)),
-                ('user_profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='phone_number', to='authentication.Profile')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("country_code", models.CharField(blank=True, max_length=5)),
+                ("number", models.CharField(max_length=30)),
+                (
+                    "user_profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="phone_number",
+                        to="authentication.Profile",
+                    ),
+                ),
             ],
         ),
     ]

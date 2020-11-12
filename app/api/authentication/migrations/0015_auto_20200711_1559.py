@@ -6,23 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0014_profile_work'),
+        ("authentication", "0014_profile_work"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SustainableDevelopmentGoals',
+            name="SustainableDevelopmentGoals",
             fields=[
-                ('code', models.IntegerField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=200)),
+                ("code", models.IntegerField(primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=200)),
             ],
             options={
-                'ordering': ['code'],
+                "ordering": ["code"],
             },
         ),
         migrations.AddField(
-            model_name='profile',
-            name='sdgs',
-            field=models.ManyToManyField(related_name='profiles', to='authentication.SustainableDevelopmentGoals'),
+            model_name="profile",
+            name="sdgs",
+            field=models.ManyToManyField(
+                related_name="profiles", to="authentication.SustainableDevelopmentGoals"
+            ),
         ),
     ]
