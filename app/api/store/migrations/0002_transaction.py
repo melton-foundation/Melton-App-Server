@@ -9,19 +9,45 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('store', '0001_initial'),
+        ("store", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Transaction',
+            name="Transaction",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('transaction_date', models.DateTimeField(auto_now_add=True)),
-                ('points', models.PositiveIntegerField()),
-                ('transaction_type', models.CharField(choices=[('BUY', 'Buy Item'), ('SELL', 'Sell Item')], max_length=10)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='store.StoreItem')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("transaction_date", models.DateTimeField(auto_now_add=True)),
+                ("points", models.PositiveIntegerField()),
+                (
+                    "transaction_type",
+                    models.CharField(
+                        choices=[("BUY", "Buy Item"), ("SELL", "Sell Item")],
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="store.StoreItem",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

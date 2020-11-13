@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0011_socialmediaaccount'),
+        ("authentication", "0011_socialmediaaccount"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='socialmediaaccount',
-            name='user_profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='social_media_accounts', to='authentication.Profile'),
+            model_name="socialmediaaccount",
+            name="user_profile",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name="social_media_accounts",
+                to="authentication.Profile",
+            ),
         ),
     ]

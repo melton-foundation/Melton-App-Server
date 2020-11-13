@@ -6,15 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0021_auto_20201003_2159'),
+        ("authentication", "0021_auto_20201003_2159"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AppleUser',
+            name="AppleUser",
             fields=[
-                ('email', models.EmailField(max_length=254, primary_key=True, serialize=False)),
-                ('apple_id', models.CharField(max_length=200)),
+                (
+                    "email",
+                    models.EmailField(
+                        max_length=254, primary_key=True, serialize=False
+                    ),
+                ),
+                ("apple_id", models.CharField(max_length=200)),
             ],
         ),
     ]

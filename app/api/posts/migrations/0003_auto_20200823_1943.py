@@ -6,17 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0002_auto_20200719_1433'),
+        ("posts", "0002_auto_20200719_1433"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='post',
-            options={'ordering': ['-updated']},
+            name="post",
+            options={"ordering": ["-updated"]},
         ),
         migrations.AddField(
-            model_name='post',
-            name='preview',
-            field=models.ImageField(blank=True, help_text='Preview image for the post', upload_to='post-previews'),
+            model_name="post",
+            name="preview",
+            field=models.ImageField(
+                blank=True,
+                help_text="Preview image for the post",
+                upload_to="post-previews",
+            ),
         ),
     ]

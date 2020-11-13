@@ -6,17 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0003_expiringtoken'),
+        ("authentication", "0003_expiringtoken"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='appuser',
-            name='username',
+            model_name="appuser",
+            name="username",
         ),
         migrations.AlterField(
-            model_name='appuser',
-            name='email',
-            field=models.EmailField(max_length=254, unique=True, verbose_name='email address'),
+            model_name="appuser",
+            name="email",
+            field=models.EmailField(
+                max_length=254, unique=True, verbose_name="email address"
+            ),
         ),
     ]

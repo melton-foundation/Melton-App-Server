@@ -8,28 +8,32 @@ from authentication import services, authentication
 from authentication.models import Profile
 from authentication.serializers import ProfileListSerializer, ProfileRetrieveSerializer
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def register(request):
     response, status = services.register_user(request)
     return Response(response, status=status)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def check_registration(request):
     response, status = services.check_registration(
-        {'email': request.query_params.get('email', None)})
+        {"email": request.query_params.get("email", None)}
+    )
     return Response(response, status=status)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def login(request):
     response, response_status = services.login(request.data)
     return Response(response, status=response_status)
+
 
 class ProfileView(APIView):
     authentication_classes = [authentication.ExpiringTokenAuthentication]
 
     def get(self, request):
-        response, status = services.read_profile(user = request.user)
+        response, status = services.read_profile(user=request.user)
         return Response(response, status=status)
 
     def post(self, request):
@@ -37,15 +41,13 @@ class ProfileView(APIView):
         return Response(response, status=status)
 
 
-
 class UsersView(ReadOnlyModelViewSet):
     authentication_classes = [authentication.ExpiringTokenAuthentication]
-    search_fields = ['name', 'user__email']
+    search_fields = ["name", "user__email"]
     filter_backends = (filters.SearchFilter,)
-    queryset = Profile.objects.filter(user__is_active = True)
+    queryset = Profile.objects.filter(user__is_active=True)
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return ProfileListSerializer
         return ProfileRetrieveSerializer
-    

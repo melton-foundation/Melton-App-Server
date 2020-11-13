@@ -4,7 +4,7 @@ from pathlib import Path
 from authentication import services
 from authentication.models import AppUser, Profile
 from django.core.files import File
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
@@ -16,13 +16,19 @@ class Command(BaseCommand):
         BaseCommand:
 
     """
+
     help = "Save profile pictures. Give a mapping file of email to image path or relative URL. To use URLs, use flag --url"
 
     def add_arguments(self, parser):
-        parser.add_argument("file", metavar="mapping_file", type=str,
-                            help="Path to file mapping email to picture files or urls")
-        parser.add_argument("--url", action="store_true",
-                            help="Use urls directly to save into database")
+        parser.add_argument(
+            "file",
+            metavar="mapping_file",
+            type=str,
+            help="Path to file mapping email to picture files or urls",
+        )
+        parser.add_argument(
+            "--url", action="store_true", help="Use urls directly to save into database"
+        )
 
     def handle(self, *args, **options):
         mapping_file = Path(options.get("file"))
@@ -35,7 +41,8 @@ class Command(BaseCommand):
                 mapping = json.load(file)
             except json.decoder.JSONDecodeError:
                 self.stderr.write(
-                    f"ERROR: File {mapping_file} is not a valid json file.")
+                    f"ERROR: File {mapping_file} is not a valid json file."
+                )
                 return
 
         if options.get("url"):
@@ -49,7 +56,8 @@ class Command(BaseCommand):
             profile = services.get_profile(email=email)
         except (AppUser.DoesNotExist, Profile.DoesNotExist):
             self.stderr.write(
-                f"ERROR: Email {email} does not exist in database. Continuing...")
+                f"ERROR: Email {email} does not exist in database. Continuing..."
+            )
         return profile
 
     def handle_file_save(self, mapping):
@@ -58,19 +66,21 @@ class Command(BaseCommand):
             image_file = Path(path)
             if not image_file.exists():
                 self.stderr.write(
-                    f"ERROR: File {image_file} does not exist. Continuing...")
+                    f"ERROR: File {image_file} does not exist. Continuing..."
+                )
                 continue
             try:
-                with image_file.open(mode='rb') as file:
+                with image_file.open(mode="rb") as file:
                     services.save_profile_picture(
-                        File(file), image_file.suffix, email=email)
+                        File(file), image_file.suffix, email=email
+                    )
                 count += 1
             except (AppUser.DoesNotExist, Profile.DoesNotExist):
                 self.stderr.write(
-                    f"ERROR: Email {email} does not exist in database. Continuing...")
+                    f"ERROR: Email {email} does not exist in database. Continuing..."
+                )
 
-        self.stdout.write(
-            f"SUCCESS: {count} Profile pictures have been stored")
+        self.stdout.write(f"SUCCESS: {count} Profile pictures have been stored")
 
     def handle_url_save(self, mapping):
         count = 0
@@ -81,11 +91,11 @@ class Command(BaseCommand):
 
             if not url.startswith(profile.picture.field.upload_to):
                 self.stderr.write(
-                    f"ERROR: URL {url} is not relative to storage folder of Profile pictures. Continuing...")
+                    f"ERROR: URL {url} is not relative to storage folder of Profile pictures. Continuing..."
+                )
                 continue
             profile.picture = url
             profile.save()
             count += 1
 
-        self.stdout.write(
-            f"SUCCESS: {count} Profile pictures have been stored")
+        self.stdout.write(f"SUCCESS: {count} Profile pictures have been stored")

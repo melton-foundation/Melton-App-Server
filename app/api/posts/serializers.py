@@ -8,8 +8,7 @@ class TagSerializer(serializers.RelatedField):
 
     def to_internal_value(self, data):
         if not isinstance(data, str):
-            raise serializers.ValidationError(
-                'Only string values are allowed.')
+            raise serializers.ValidationError("Only string values are allowed.")
 
         return data
 
@@ -25,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ('id', 'active')
+        exclude = ("id", "active")
 
 
 class PostListSerializer(PostSerializer):
@@ -33,4 +32,4 @@ class PostListSerializer(PostSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'preview', 'description', 'tags', 'created', 'updated')
+        fields = ("id", "title", "preview", "description", "tags", "created", "updated")

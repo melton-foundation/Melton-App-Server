@@ -7,17 +7,32 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0010_auto_20200704_1412'),
+        ("authentication", "0010_auto_20200704_1412"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SocialMediaAccount',
+            name="SocialMediaAccount",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('account', models.CharField(max_length=200)),
-                ('type', models.CharField(max_length=100)),
-                ('user_profile', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='social_media_account', to='authentication.Profile')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("account", models.CharField(max_length=200)),
+                ("type", models.CharField(max_length=100)),
+                (
+                    "user_profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="social_media_account",
+                        to="authentication.Profile",
+                    ),
+                ),
             ],
         ),
     ]
