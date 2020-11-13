@@ -131,6 +131,7 @@ jobs:
         pip install flake8
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test django application
+      working-directory: './app/api'
       run: |
         python manage.py migrate
         python manage.py test
