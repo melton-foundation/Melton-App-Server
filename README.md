@@ -1,6 +1,6 @@
 # Melton-App-Server
 ## Django backend for the Melton App - [meltonapp.com](https://meltonapp.com)
-#### REST API, Django dashboard, markdown preview editor, Google and Apple oauth, simple online store, automated emails
+### REST API, Django dashboard, markdown preview editor, Google and Apple oauth, simple online store, automated emails
 
 If you're a Melton Fellow and you can think of cool use-cases for this Melton API (currently the Melton App is the only client) reach out to us!
 You can see the API schema here: [meltonapp.com/api/docs](https://meltonapp.com/api/docs)
