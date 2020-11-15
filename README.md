@@ -3,7 +3,7 @@
 #### REST API, Django dashboard, markdown preview editor, Google and Apple oauth, simple online store, automated emails
 
 If you're a Melton Fellow and you can think of cool use-cases for this Melton API (currently the Melton App is the only client) reach out to us!
-You can see the API schema here: https://meltonapp.com/api/docs
+You can see the API schema here: [meltonapp.com/api/docs](https://meltonapp.com/api/docs)
 
 We would love your contributions - raise a new issue or have a look at the existing ones :)
 
