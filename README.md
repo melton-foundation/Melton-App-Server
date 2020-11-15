@@ -5,7 +5,7 @@
 If you're a Melton Fellow and you can think of cool use-cases for this Melton API (currently the Melton App is the only client) reach out to us!
 You can see the API schema here: [meltonapp.com/api/docs](https://meltonapp.com/api/docs)
 
-We would love your contributions - raise a new issue or have a look at the existing ones :)
+Whether you're a Melton Fellow or not, we would love your contributions - raise a new issue or have a look at the existing ones :)
 
 
 ## Features
