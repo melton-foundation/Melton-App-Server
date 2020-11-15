@@ -23,5 +23,5 @@ Whether you're a Melton Fellow or not, we would love your contributions - raise 
 ![signup_email](docs/images/signup_email.png)
 
 More docs:
-1. [Getting Started](docs/getting-started.md)
-2. [Contributing](docs/contibuting.md)
+1. [Getting Started](docs/getting-started.md) - how to setup your local env
+2. [Contributing](docs/contibuting.md) - code conventions and general tips
