@@ -267,12 +267,13 @@ def save_profile_picture(picture_file, extension, user=None, email=None):
         user = AppUser.objects.get(email=email)
         profile = Profile.objects.get(user=user)
 
-    filename = email.split("@")[0] + "_" + str(uuid.uuid4().hex)[:6] + extension
-    profile.picture.save(filename, picture_file)
-    profile.save()
+    if not profile.picture:
+        filename = email.split("@")[0] + "_" + str(uuid.uuid4().hex)[:6] + extension
+        profile.picture.save(filename, picture_file)
+        profile.save()
 
-    if picture_file is not None and isinstance(picture_file, File):
-        picture_file.close()
+        if picture_file is not None and isinstance(picture_file, File):
+            picture_file.close()
 
 
 def _form_bad_request_response(errors):
