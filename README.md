@@ -1,4 +1,9 @@
 # Melton-App-Server
+
+![Django Test](https://github.com/melton-foundation/Melton-App-Server/workflows/Django%20Test/badge.svg)
+![Lint Code Base](https://github.com/melton-foundation/Melton-App-Server/workflows/Lint%20Code%20Base/badge.svg)
+![CodeQL](https://github.com/melton-foundation/Melton-App-Server/workflows/CodeQL/badge.svg)
+
 ## Django backend for the Melton App - [meltonapp.com](https://meltonapp.com)
 ### REST API, Django dashboard, markdown preview editor, Google and Apple oauth, simple online store, automated emails
 
