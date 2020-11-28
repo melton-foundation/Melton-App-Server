@@ -28,7 +28,7 @@ Pillow==7.1.2
 psycopg2==2.8.5
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycodestyle==2.5.0
+pycodestyle
 pylint==2.4.4
 python-dateutil==2.8.1
 pytz==2019.3
