@@ -4,6 +4,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ("authentication", "0015_auto_20200711_1559"),
