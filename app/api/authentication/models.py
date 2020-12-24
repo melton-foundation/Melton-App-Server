@@ -89,7 +89,7 @@ class ExpiringToken(Token):
         expiry_interval = settings.TOKEN_SETTINGS.get(
             "EXPIRING_TOKEN_LIFESPAN", timedelta(days=30)
         )
-        if self.created < now - expiry_interval:
+        if self.refreshed < now - expiry_interval:
             return True
         return False
 

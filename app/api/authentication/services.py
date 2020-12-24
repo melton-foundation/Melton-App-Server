@@ -225,7 +225,7 @@ def read_profile(user=None, email=None):
     try:
         profile = get_profile(user=user, email=email)
     except (AppUser.DoesNotExist, Profile.DoesNotExist):
-        return ProfileDoesNotExist(email=email), status.HTTP_404_NOT_FOUND
+        return ProfileDoesNotExist(email=email).to_dict(), status.HTTP_404_NOT_FOUND
 
     serializer = ProfileReadUpdateSerializer(profile)
     response = {"type": "success", "profile": serializer.data}
