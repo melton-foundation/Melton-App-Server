@@ -4,22 +4,18 @@ from django.conf import settings
 from django.core.files import File
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
-from response.errors.authentication import (
-    AccountNotApproved,
-    ProfileDoesNotExist,
-    UserNotRegistered,
-    InvalidAppleUser,
-)
+from response.errors.authentication import (AccountNotApproved,
+                                            InvalidAppleUser,
+                                            ProfileDoesNotExist,
+                                            UserNotRegistered)
 from rest_framework import exceptions, status
 
 from authentication.authentication import AppleOauth, GoogleOauth, WeChatOauth
-from authentication.models import AppUser, ExpiringToken, Profile, AppleUser
-from authentication.serializers import (
-    LoginSerializer,
-    ProfileCreateSerializer,
-    ProfileReadUpdateSerializer,
-    RegistrationStatusSerializer,
-)
+from authentication.models import AppleUser, AppUser, ExpiringToken, Profile
+from authentication.serializers import (LoginSerializer,
+                                        ProfileCreateSerializer,
+                                        ProfileReadUpdateSerializer,
+                                        RegistrationStatusSerializer)
 
 
 def register_user(request):
