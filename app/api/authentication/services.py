@@ -4,21 +4,21 @@ from django.conf import settings
 from django.core.files import File
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
-from response.errors.authentication import (
-    AccountNotApproved,
-    ProfileDoesNotExist,
-    UserNotRegistered,
-    InvalidAppleUser,
-)
 from rest_framework import exceptions, status
 
 from authentication.authentication import AppleOauth, GoogleOauth, WeChatOauth
-from authentication.models import AppUser, ExpiringToken, Profile, AppleUser
+from authentication.models import AppleUser, AppUser, ExpiringToken, Profile
 from authentication.serializers import (
     LoginSerializer,
     ProfileCreateSerializer,
     ProfileReadUpdateSerializer,
     RegistrationStatusSerializer,
+)
+from response.errors.authentication import (
+    AccountNotApproved,
+    InvalidAppleUser,
+    ProfileDoesNotExist,
+    UserNotRegistered,
 )
 
 
@@ -225,7 +225,7 @@ def read_profile(user=None, email=None):
     try:
         profile = get_profile(user=user, email=email)
     except (AppUser.DoesNotExist, Profile.DoesNotExist):
-        return ProfileDoesNotExist(email=email), status.HTTP_404_NOT_FOUND
+        return ProfileDoesNotExist(email=email).to_dict(), status.HTTP_404_NOT_FOUND
 
     serializer = ProfileReadUpdateSerializer(profile)
     response = {"type": "success", "profile": serializer.data}
