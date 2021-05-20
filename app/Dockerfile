@@ -7,6 +7,8 @@ RUN apt-get install -y libpq-dev
 RUN mkdir /code
 ADD . /code
 WORKDIR /code
+RUN pip install --upgrade pip
+RUN pip install wheel
 RUN pip install -r requirements.txt
 WORKDIR /code/api
 EXPOSE 8000
