@@ -1,4 +1,4 @@
-asgiref==3.2.3
+asgiref
 astroid==2.3.3
 autopep8==1.5
 boto3==1.14.12
