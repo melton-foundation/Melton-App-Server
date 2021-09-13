@@ -105,3 +105,5 @@ admin.site.register(ExpiringToken, TokenAdmin)
 admin.site.register(AppUser, AppUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(SustainableDevelopmentGoal)
+
+admin.site.enable_nav_sidebar = False
