@@ -1,6 +1,6 @@
 [servers]
-indenwolken ansible_host=85.214.65.195 ansible_port=2222
+indenwolken ansible_host=161.97.152.229 ansible_port=2222
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
-ansible_user=root
+ansible_user=parithosh
