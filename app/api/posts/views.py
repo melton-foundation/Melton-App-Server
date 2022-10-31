@@ -6,7 +6,8 @@ from posts.serializers import PostListSerializer, PostSerializer
 
 
 class PostView(ReadOnlyModelViewSet):
-    authentication_classes = [authentication.ExpiringTokenAuthentication]
+    authentication_classes = []
+    permission_classes = []
     search_fields = ["title", "description", "tags__tag"]
     filter_backends = (filters.SearchFilter,)
     queryset = Post.objects.filter(active=True)
