@@ -4,7 +4,7 @@ autopep8==1.5
 boto3==1.14.12
 botocore==1.17.12
 cachetools==4.0.0
-certifi==2019.11.28
+certifi==2022.12.7
 chardet==3.0.4
 colorama==0.4.3
 Django==3.1.12
